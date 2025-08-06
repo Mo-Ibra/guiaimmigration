@@ -1,10 +1,21 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 import { Badge } from "../../components/ui/badge";
 import { Switch } from "../../components/ui/switch";
 import {
@@ -18,10 +29,10 @@ import {
   Globe,
   Eye,
   Download,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { apiRequest } from "../../lib/queryClient";
-import { EnhancedFileUpload } from "../../components/EnhancedFileUpload";
+// import { EnhancedFileUpload } from "../../components/EnhancedFileUpload";
 
 interface Guide {
   id: number;
@@ -29,17 +40,13 @@ interface Guide {
   titleEs: string;
   description: string;
   descriptionEs: string;
+  fileUrl: string;
+  fileUrlEs: string;
   formType: string;
   price: string;
   skillLevel: string;
   featured: boolean;
   onlineFiling: boolean;
-  fileName?: string;
-  fileContent?: string;
-  fileType?: string;
-  fileName2?: string;
-  fileContent2?: string;
-  fileType2?: string;
   createdAt: string;
 }
 
@@ -60,11 +67,13 @@ export function AdminProducts() {
     titleEs: "",
     description: "",
     descriptionEs: "",
+    fileUrl: "",
+    fileUrlEs: "",
     formType: "",
     price: "",
     skillLevel: "beginner",
     featured: false,
-    onlineFiling: false
+    onlineFiling: false,
   });
 
   useEffect(() => {
@@ -72,10 +81,11 @@ export function AdminProducts() {
   }, []);
 
   useEffect(() => {
-    const filtered = guides.filter(guide =>
-      guide.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guide.formType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guide.skillLevel.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = guides.filter(
+      (guide) =>
+        guide.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        guide.formType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        guide.skillLevel.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredGuides(filtered);
   }, [guides, searchTerm]);
@@ -97,7 +107,7 @@ export function AdminProducts() {
       const response = await apiRequest("GET", "/api/admin/guides");
       const data = await response.json();
       setGuides(data);
-      
+
       // Update the editingGuide state with the refreshed data
       const refreshedGuide = data.find((g: Guide) => g.id === editingGuideId);
       if (refreshedGuide) {
@@ -111,49 +121,37 @@ export function AdminProducts() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate file requirement for new guides
-    if (!editingGuide && selectedFiles.length === 0) {
-      alert("Please select at least one file to upload. A guide file is required for new guides.");
-      return;
-    }
-
-    // Validate individual file size limits (100MB per file)
-    for (const file of selectedFiles) {
-      if (file.size > 100 * 1024 * 1024) {
-        alert(`File "${file.name}" exceeds the 100MB individual file limit. Please select a smaller file.`);
-        return;
-      }
-    }
-
-    // Validate total combined file size (100MB total limit)
-    const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-    if (totalSize > 100 * 1024 * 1024) {
-      alert(`Total file size (${(totalSize / 1024 / 1024).toFixed(2)}MB) exceeds the 100MB total limit. Please select smaller files or remove some files.`);
-      return;
-    }
-
     setSaving(true);
+
     try {
       if (editingGuide) {
-        const response = await apiRequest("PATCH", `/api/admin/guides/${editingGuide.id}`, formData);
+        const response = await apiRequest(
+          "PATCH",
+          `/api/admin/guides/${editingGuide.id}`,
+          formData
+        );
         const updatedGuide = await response.json();
 
         // If there are files selected for editing, upload them
         if (selectedFiles.length > 0) {
-          await handleFileUpload(editingGuide.id);
           // Refresh guides list and update editingGuide state
           await refreshGuidesAndUpdateEditingGuide(editingGuide.id);
         } else {
-          setGuides(guides.map(g => g.id === editingGuide.id ? updatedGuide : g));
+          setGuides(
+            guides.map((g) => (g.id === editingGuide.id ? updatedGuide : g))
+          );
         }
       } else {
         // First create the guide
-        const response = await apiRequest("POST", "/api/admin/guides", formData);
+        const response = await apiRequest(
+          "POST",
+          "/api/admin/guides",
+          formData
+        );
         const newGuide = await response.json();
 
         // Upload the required files
         if (selectedFiles.length > 0 && newGuide.id) {
-          await handleFileUpload(newGuide.id);
           // Refresh guides list to get updated guide with file information
           await fetchGuides();
         } else {
@@ -166,165 +164,24 @@ export function AdminProducts() {
     } catch (error) {
       console.error("Failed to save guide:", error);
       console.error("Error details:", {
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? error.message : "Unknown error",
         stack: error instanceof Error ? error.stack : null,
         formData,
-        editingGuide: editingGuide ? { id: editingGuide.id, title: editingGuide.title } : null
+        editingGuide: editingGuide
+          ? { id: editingGuide.id, title: editingGuide.title }
+          : null,
       });
-      
+
       // Show more detailed error message
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      alert(`Failed to ${editingGuide ? 'update' : 'create'} guide. Error: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      alert(
+        `Failed to ${
+          editingGuide ? "update" : "create"
+        } guide. Error: ${errorMessage}`
+      );
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleFileUpload = async (guideId: number) => {
-    if (selectedFiles.length === 0) return;
-
-    try {
-      // Determine which attachment slots to use based on existing files
-      const getNextAttachmentNumber = (index: number) => {
-        if (!editingGuide) {
-          // For new guides, use sequential numbering
-          return index + 1;
-        }
-        
-        // For existing guides, check which slots are available
-        const hasFile1 = editingGuide.fileName && editingGuide.fileContent;
-        const hasFile2 = editingGuide.fileName2 && editingGuide.fileContent2;
-        
-        if (index === 0) {
-          // For the first file being uploaded
-          if (!hasFile1) {
-            return 1; // Use slot 1 if it's empty
-          } else if (!hasFile2) {
-            return 2; // Use slot 2 if slot 1 is occupied
-          } else {
-            return 1; // Replace slot 1 if both are occupied
-          }
-        } else {
-          // For the second file being uploaded
-          if (!hasFile2) {
-            return 2; // Use slot 2 if it's empty
-          } else {
-            return 1; // This shouldn't happen with proper validation
-          }
-        }
-      };
-
-      for (let i = 0; i < selectedFiles.length && i < 2; i++) {
-        const file = selectedFiles[i];
-        const formData = new FormData();
-        const attachmentNumber = getNextAttachmentNumber(i);
-
-        // Use enhanced upload for large files (>25MB to be safe with 100MB files)
-        if (file.size > 25 * 1024 * 1024) {
-          // Use the large file upload endpoint with compression
-          formData.append('file', file);
-          formData.append('compressed', 'false'); // Don't compress for now to avoid issues
-          formData.append('attachmentNumber', attachmentNumber.toString());
-
-          const response = await fetch(`/api/admin/guides/${guideId}/upload-large-file-direct`, {
-            method: 'POST',
-            body: formData,
-            credentials: 'include',
-          });
-
-          if (!response.ok) {
-            throw new Error(`Large file upload failed for ${file.name}`);
-          }
-        } else {
-          // Use regular upload for smaller files
-          formData.append('file', file);
-          formData.append('attachmentNumber', attachmentNumber.toString());
-
-          const response = await fetch(`/api/admin/guides/${guideId}/upload-file`, {
-            method: 'POST',
-            body: formData,
-            credentials: 'include',
-          });
-
-          if (!response.ok) {
-            throw new Error(`File upload failed for ${file.name}`);
-          }
-        }
-      }
-
-      console.log("Files uploaded successfully");
-    } catch (error) {
-      console.error("Failed to upload files:", error);
-      throw error; // Re-throw to handle in calling function
-    }
-  };
-
-  const handleDownloadFile = (guide: Guide) => {
-    if (!guide.fileContent || !guide.fileName) {
-      console.error("No file content available");
-      return;
-    }
-
-    try {
-      // Convert base64 to blob
-      const byteCharacters = atob(guide.fileContent);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: guide.fileType || 'application/octet-stream' });
-
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = guide.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to download file:", error);
-    }
-  };
-
-  const handleViewFile = (guide: Guide) => {
-    if (!guide.fileContent || !guide.fileName) {
-      console.error("No file content available");
-      return;
-    }
-
-    setPreviewGuide(guide);
-    setShowFilePreview(true);
-  };
-
-  const handleViewFileInNewTab = (guide: Guide) => {
-    if (!guide.fileContent || !guide.fileName) {
-      console.error("No file content available");
-      return;
-    }
-
-    try {
-      // Convert base64 to blob
-      const byteCharacters = atob(guide.fileContent);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: guide.fileType || 'application/octet-stream' });
-
-      // Create URL and open in new tab
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, '_blank');
-
-      // Clean up the URL after a delay to allow the browser to load it
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-      }, 1000);
-    } catch (error) {
-      console.error("Failed to view file:", error);
     }
   };
 
@@ -334,7 +191,7 @@ export function AdminProducts() {
     setDeleting(id);
     try {
       await apiRequest("DELETE", `/api/admin/guides/${id}`);
-      setGuides(guides.filter(g => g.id !== id));
+      setGuides(guides.filter((g) => g.id !== id));
     } catch (error) {
       console.error("Failed to delete guide:", error);
       alert("Failed to delete guide. Please try again.");
@@ -348,7 +205,7 @@ export function AdminProducts() {
     if (!files) return;
 
     const newFiles = Array.from(files);
-    
+
     // Validate file count (max 2 files)
     if (newFiles.length > 2) {
       alert("You can upload a maximum of 2 files per guide.");
@@ -358,7 +215,9 @@ export function AdminProducts() {
     // Validate individual file sizes (100MB limit per file)
     for (const file of newFiles) {
       if (file.size > 100 * 1024 * 1024) {
-        alert(`File "${file.name}" exceeds the 100MB individual file limit. Please select a smaller file.`);
+        alert(
+          `File "${file.name}" exceeds the 100MB individual file limit. Please select a smaller file.`
+        );
         return;
       }
     }
@@ -366,21 +225,27 @@ export function AdminProducts() {
     // Add new files to existing selection (accumulate up to 2 files)
     const allFiles = [...selectedFiles, ...newFiles];
     if (allFiles.length > 2) {
-      alert("You can only have a maximum of 2 files. Please remove some files first.");
+      alert(
+        "You can only have a maximum of 2 files. Please remove some files first."
+      );
       return;
     }
 
     // Validate total combined file size (100MB total limit)
     const totalSize = allFiles.reduce((sum, file) => sum + file.size, 0);
     if (totalSize > 100 * 1024 * 1024) {
-      alert(`Total file size (${(totalSize / 1024 / 1024).toFixed(2)}MB) exceeds the 100MB total limit. Please select smaller files or remove some files.`);
+      alert(
+        `Total file size (${(totalSize / 1024 / 1024).toFixed(
+          2
+        )}MB) exceeds the 100MB total limit. Please select smaller files or remove some files.`
+      );
       return;
     }
 
     setSelectedFiles(allFiles);
-    
+
     // Clear the input to allow selecting the same file again if needed
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const removeFile = (index: number) => {
@@ -393,11 +258,13 @@ export function AdminProducts() {
       titleEs: "",
       description: "",
       descriptionEs: "",
+      fileUrl: "",
+      fileUrlEs: "",
       formType: "",
       price: "",
       skillLevel: "beginner",
       featured: false,
-      onlineFiling: false
+      onlineFiling: false,
     });
     setEditingGuide(null);
     setSelectedFiles([]);
@@ -410,11 +277,13 @@ export function AdminProducts() {
       titleEs: guide.titleEs,
       description: guide.description,
       descriptionEs: guide.descriptionEs,
+      fileUrl: guide.fileUrl,
+      fileUrlEs: guide.fileUrlEs,
       formType: guide.formType,
       price: guide.price,
       skillLevel: guide.skillLevel,
       featured: guide.featured,
-      onlineFiling: guide.onlineFiling
+      onlineFiling: guide.onlineFiling,
     });
     // Reset selected files when opening edit modal
     setSelectedFiles([]);
@@ -423,10 +292,14 @@ export function AdminProducts() {
 
   const getSkillLevelColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "beginner":
+        return "bg-green-100 text-green-800";
+      case "intermediate":
+        return "bg-yellow-100 text-yellow-800";
+      case "advanced":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -442,7 +315,10 @@ export function AdminProducts() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
-        <Button onClick={() => setShowModal(true)} className="flex items-center space-x-2">
+        <Button
+          onClick={() => setShowModal(true)}
+          className="flex items-center space-x-2"
+        >
           <Plus className="w-4 h-4" />
           <span>Add New Guide</span>
         </Button>
@@ -479,116 +355,24 @@ export function AdminProducts() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-1">
-                  {guide.featured && <Star className="w-4 h-4 text-yellow-500" />}
-                  {guide.onlineFiling && <Globe className="w-4 h-4 text-blue-500" />}
-                  {(guide.fileName || guide.fileName2) && (
-                    <div className="flex items-center space-x-1">
-                      <FileText className="w-4 h-4 text-gray-500" />
-                      {guide.fileName && guide.fileName2 && (
-                        <span className="text-xs bg-gray-100 text-gray-700 px-1 rounded">2</span>
-                      )}
-                    </div>
+                  {guide.featured && (
+                    <Star className="w-4 h-4 text-yellow-500" />
+                  )}
+                  {guide.onlineFiling && (
+                    <Globe className="w-4 h-4 text-blue-500" />
                   )}
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{guide.description}</p>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                {guide.description}
+              </p>
 
-              {guide.fileName || guide.fileName2 ? (
-                <div className="space-y-2 mb-3">
-                  {/* Primary File */}
-                  {guide.fileName && (
-                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded-md border border-gray-200">
-                      <div className="flex items-center space-x-2 flex-1 min-w-0">
-                        <FileText className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <span className="text-sm text-gray-700 truncate block">File 1: {guide.fileName}</span>
-                        </div>
-                      </div>
-                      <div className="flex space-x-1 ml-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewFile(guide);
-                          }}
-                          className="h-6 px-2 text-gray-600 hover:text-gray-700 hover:bg-gray-100"
-                          title="View file 1"
-                        >
-                          <Eye className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDownloadFile(guide);
-                          }}
-                          className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-100"
-                          title="Download file 1"
-                        >
-                          <Download className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Secondary File */}
-                  {guide.fileName2 && (
-                    <div className="flex items-center justify-between p-2 bg-blue-50 rounded-md border border-blue-200">
-                      <div className="flex items-center space-x-2 flex-1 min-w-0">
-                        <FileText className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <span className="text-sm text-blue-700 truncate block">File 2: {guide.fileName2}</span>
-                        </div>
-                      </div>
-                      <div className="flex space-x-1 ml-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const secondFileGuide = {
-                              ...guide,
-                              fileName: guide.fileName2,
-                              fileContent: guide.fileContent2,
-                              fileType: guide.fileType2
-                            };
-                            handleViewFile(secondFileGuide);
-                          }}
-                          className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-100"
-                          title="View file 2"
-                        >
-                          <Eye className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const secondFileGuide = {
-                              ...guide,
-                              fileName: guide.fileName2,
-                              fileContent: guide.fileContent2,
-                              fileType: guide.fileType2
-                            };
-                            handleDownloadFile(secondFileGuide);
-                          }}
-                          className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-100"
-                          title="Download file 2"
-                        >
-                          <Download className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
+              {guide.fileUrl && (
                 <div className="flex items-center space-x-2 mb-3 p-2 bg-gray-50 rounded-md border border-gray-200">
                   <FileText className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">No files attached</span>
+                  <span className="text-sm text-gray-500">{guide.fileUrl}</span>
                 </div>
               )}
 
@@ -601,7 +385,7 @@ export function AdminProducts() {
                   {new Date(guide.createdAt).toLocaleDateString()}
                 </div>
               </div>
-              
+
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
@@ -637,16 +421,19 @@ export function AdminProducts() {
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold">
-                {editingGuide ? 'Edit Guide' : 'Add New Guide'}
+                {editingGuide ? "Edit Guide" : "Add New Guide"}
               </h3>
-              <Button variant="outline" onClick={() => {
-                setShowModal(false);
-                resetForm();
-              }}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowModal(false);
+                  resetForm();
+                }}
+              >
                 ×
               </Button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -654,7 +441,9 @@ export function AdminProducts() {
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -663,41 +452,75 @@ export function AdminProducts() {
                   <Input
                     id="titleEs"
                     value={formData.titleEs}
-                    onChange={(e) => setFormData({...formData, titleEs: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, titleEs: e.target.value })
+                    }
                     required
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="description">Description (English)</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="descriptionEs">Description (Spanish)</Label>
                 <Textarea
                   id="descriptionEs"
                   value={formData.descriptionEs}
-                  onChange={(e) => setFormData({...formData, descriptionEs: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, descriptionEs: e.target.value })
+                  }
                   rows={3}
                   required
                 />
               </div>
-              
+
+              <div>
+                <Label htmlFor="fileUrl">File Url: (English)</Label>
+                <Input
+                  id="fileUrl"
+                  value={formData.fileUrl}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fileUrl: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="fileUrlEs">File Url: (Spanish)</Label>
+                <Input
+                  id="fileUrlEs"
+                  value={formData.fileUrlEs}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fileUrlEs: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+
+
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="formType">Form Type</Label>
                   <Input
                     id="formType"
                     value={formData.formType}
-                    onChange={(e) => setFormData({...formData, formType: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, formType: e.target.value })
+                    }
                     placeholder="e.g., I-130"
                     required
                   />
@@ -709,13 +532,20 @@ export function AdminProducts() {
                     type="number"
                     step="0.01"
                     value={formData.price}
-                    onChange={(e) => setFormData({...formData, price: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div>
                   <Label htmlFor="skillLevel">Skill Level</Label>
-                  <Select value={formData.skillLevel} onValueChange={(value) => setFormData({...formData, skillLevel: value})}>
+                  <Select
+                    value={formData.skillLevel}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, skillLevel: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -727,13 +557,15 @@ export function AdminProducts() {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="featured"
                     checked={formData.featured}
-                    onCheckedChange={(checked) => setFormData({...formData, featured: checked})}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, featured: checked })
+                    }
                   />
                   <Label htmlFor="featured">Featured Guide</Label>
                 </div>
@@ -741,288 +573,39 @@ export function AdminProducts() {
                   <Switch
                     id="onlineFiling"
                     checked={formData.onlineFiling}
-                    onCheckedChange={(checked) => setFormData({...formData, onlineFiling: checked})}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, onlineFiling: checked })
+                    }
                   />
                   <Label htmlFor="onlineFiling">Online Filing Available</Label>
                 </div>
               </div>
 
-              {/* File Upload Section */}
-              <div>
-                <Label htmlFor="guideFiles">
-                  Guide Files (PDF, DOC, DOCX) - Max 100MB per file, 100MB total {!editingGuide && <span className="text-red-500">*</span>}
-                </Label>
-                <div className="mt-2 space-y-3">
-                  {/* Current File Status */}
-                  {editingGuide && (
-                    <div className="p-3 bg-gray-50 rounded-md border">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <FileText className="w-4 h-4 text-gray-500" />
-                          <span className="text-sm font-medium text-gray-700">Current Files Status:</span>
-                        </div>
-                      </div>
-                      <div className="mt-2 space-y-2">
-                        {/* Primary File */}
-                        <div className="flex items-center justify-between p-2 bg-white rounded border">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-medium text-gray-500">File 1:</span>
-                            {editingGuide.fileName ? (
-                              <div className="flex items-center space-x-2">
-                                <div className="flex items-center space-x-1 text-gray-700 bg-gray-100 px-2 py-1 rounded text-xs">
-                                  <FileText className="w-3 h-3" />
-                                  <span>Attached</span>
-                                </div>
-                                <span className="text-sm text-gray-600">{editingGuide.fileName}</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center space-x-1 text-orange-700 bg-orange-100 px-2 py-1 rounded text-xs">
-                                <FileText className="w-3 h-3" />
-                                <span>No File</span>
-                              </div>
-                            )}
-                          </div>
-                          {editingGuide.fileName && editingGuide.fileContent && (
-                            <div className="flex space-x-1">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleViewFile(editingGuide)}
-                                className="text-xs flex items-center space-x-1 h-6 px-2"
-                              >
-                                <Eye className="w-3 h-3" />
-                                <span>View</span>
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDownloadFile(editingGuide)}
-                                className="text-xs flex items-center space-x-1 h-6 px-2"
-                              >
-                                <Download className="w-3 h-3" />
-                                <span>Download</span>
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Secondary File */}
-                        <div className="flex items-center justify-between p-2 bg-white rounded border">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-medium text-gray-500">File 2:</span>
-                            {editingGuide.fileName2 ? (
-                              <div className="flex items-center space-x-2">
-                                <div className="flex items-center space-x-1 text-gray-700 bg-gray-100 px-2 py-1 rounded text-xs">
-                                  <FileText className="w-3 h-3" />
-                                  <span>Attached</span>
-                                </div>
-                                <span className="text-sm text-gray-600">{editingGuide.fileName2}</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center space-x-1 text-gray-500 bg-gray-100 px-2 py-1 rounded text-xs">
-                                <FileText className="w-3 h-3" />
-                                <span>No File</span>
-                              </div>
-                            )}
-                          </div>
-                          {editingGuide.fileName2 && editingGuide.fileContent2 && (
-                            <div className="flex space-x-1">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  // Create a temporary guide object for the second file
-                                  const secondFileGuide = {
-                                    ...editingGuide,
-                                    fileName: editingGuide.fileName2,
-                                    fileContent: editingGuide.fileContent2,
-                                    fileType: editingGuide.fileType2
-                                  };
-                                  handleViewFile(secondFileGuide);
-                                }}
-                                className="text-xs flex items-center space-x-1 h-6 px-2"
-                              >
-                                <Eye className="w-3 h-3" />
-                                <span>View</span>
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  // Create a temporary guide object for the second file
-                                  const secondFileGuide = {
-                                    ...editingGuide,
-                                    fileName: editingGuide.fileName2,
-                                    fileContent: editingGuide.fileContent2,
-                                    fileType: editingGuide.fileType2
-                                  };
-                                  handleDownloadFile(secondFileGuide);
-                                }}
-                                className="text-xs flex items-center space-x-1 h-6 px-2"
-                              >
-                                <Download className="w-3 h-3" />
-                                <span>Download</span>
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* File Upload Input */}
-                  <div>
-                    <input
-                      id="guideFiles"
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      multiple
-                      onChange={handleFileSelect}
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                      disabled={selectedFiles.length >= 2}
-                    />
-                    
-                    {/* Selected Files Display */}
-                    {selectedFiles.length > 0 && (
-                      <div className="mt-2 space-y-2">
-                        {selectedFiles.map((file, index) => (
-                          <div key={index} className="p-2 bg-blue-50 rounded border border-blue-200">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-blue-700 font-medium truncate">
-                                  {file.name}
-                                </p>
-                                <div className="flex items-center space-x-4 mt-1">
-                                  <span className="text-xs text-blue-600">
-                                    Size: {(file.size / 1024 / 1024).toFixed(2)} MB
-                                  </span>
-                                  {file.size > 50 * 1024 * 1024 && (
-                                    <span className="text-xs text-orange-600">
-                                      Large file - using enhanced upload (compression disabled for stability)
-                                    </span>
-                                  )}
-                                  {file.size > 100 * 1024 * 1024 && (
-                                    <span className="text-xs text-red-600 font-medium">
-                                      File exceeds 100MB individual limit
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              <button
-                            onClick={() => removeFile(index)}
-                            className="text-red-500 hover:text-red-600 text-sm font-medium"
-                            type="button"
-                          >
-                            Remove
-                          </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
               <div className="flex space-x-2 pt-4">
                 <Button type="submit" className="flex-1" disabled={saving}>
                   {saving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {editingGuide ? 'Updating...' : 'Creating...'}
+                      {editingGuide ? "Updating..." : "Creating..."}
                     </>
+                  ) : editingGuide ? (
+                    "Update Guide"
                   ) : (
-                    editingGuide ? 'Update Guide' : 'Create Guide'
+                    "Create Guide"
                   )}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => {
-                  setShowModal(false);
-                  resetForm();
-                }}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowModal(false);
+                    resetForm();
+                  }}
+                >
                   Cancel
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* File Preview Modal */}
-      {showFilePreview && previewGuide && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-bold">File Preview</h3>
-                <p className="text-gray-600">{previewGuide.fileName}</p>
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => handleViewFileInNewTab(previewGuide)}
-                  className="flex items-center space-x-2"
-                >
-                  <Eye className="w-4 h-4" />
-                  <span>Open in New Tab</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => handleDownloadFile(previewGuide)}
-                  className="flex items-center space-x-2"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowFilePreview(false);
-                    setPreviewGuide(null);
-                  }}
-                >
-                  ×
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-hidden">
-              {previewGuide.fileType?.includes('pdf') ? (
-                <iframe
-                  src={`data:${previewGuide.fileType};base64,${previewGuide.fileContent}`}
-                  className="w-full h-full border rounded"
-                  title="PDF Preview"
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full bg-gray-50 rounded border">
-                  <FileText className="w-16 h-16 text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-2">Preview not available for this file type</p>
-                  <p className="text-sm text-gray-500 mb-4">
-                    File type: {previewGuide.fileType || 'Unknown'}
-                  </p>
-                  <div className="flex space-x-2">
-                    <Button
-                      onClick={() => handleViewFileInNewTab(previewGuide)}
-                      className="flex items-center space-x-2"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span>Open in New Tab</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleDownloadFile(previewGuide)}
-                      className="flex items-center space-x-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span>Download</span>
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}

@@ -15,6 +15,8 @@ CREATE TABLE "guides" (
 	"title_es" text NOT NULL,
 	"description" text NOT NULL,
 	"description_es" text NOT NULL,
+	"file_url" text NOT NULL,
+	"file_url_es" text NOT NULL,
 	"form_type" text NOT NULL,
 	"price" numeric(10, 2) NOT NULL,
 	"skill_level" text NOT NULL,
@@ -48,11 +50,26 @@ CREATE TABLE "translation_orders" (
 	"status" varchar(20) DEFAULT 'pending' NOT NULL,
 	"original_file_path" varchar(500),
 	"translated_file_path" varchar(500),
+	"original_file_content" text,
+	"translated_file_content" text,
 	"admin_notes" text,
 	"payment_intent_id" varchar(255),
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
 	CONSTRAINT "translation_orders_order_number_unique" UNIQUE("order_number")
+);
+--> statement-breakpoint
+CREATE TABLE "translation_pricing" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"service_type" varchar(50) NOT NULL,
+	"price_per_page" numeric(10, 2) NOT NULL,
+	"minimum_price" numeric(10, 2) NOT NULL,
+	"delivery_days" integer NOT NULL,
+	"description" text NOT NULL,
+	"description_es" text NOT NULL,
+	"active" boolean DEFAULT true,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "uscis_data" (

@@ -1,6 +1,29 @@
-import { User, InsertUser, Guide, InsertGuide, ContactMessage, InsertContactMessage, UscisData, InsertUscisData, Testimonial, InsertTestimonial, TranslationOrder, InsertTranslationOrder, TranslationPricing, InsertTranslationPricing } from "@shared/schema";
+import {
+  User,
+  InsertUser,
+  Guide,
+  InsertGuide,
+  ContactMessage,
+  InsertContactMessage,
+  UscisData,
+  InsertUscisData,
+  Testimonial,
+  InsertTestimonial,
+  TranslationOrder,
+  InsertTranslationOrder,
+  TranslationPricing,
+  InsertTranslationPricing,
+} from "@shared/schema";
 import { db } from "./db";
-import { users, guides, contactMessages, uscisData, testimonials, translationOrders, translationPricing } from "@shared/schema";
+import {
+  users,
+  guides,
+  contactMessages,
+  uscisData,
+  testimonials,
+  translationOrders,
+  translationPricing,
+} from "@shared/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
@@ -15,7 +38,7 @@ export interface IStorage {
   deleteUser(id: number): Promise<void>;
   authenticateUser(username: string, password: string): Promise<User | null>;
   hashPassword(password: string): Promise<string>;
-  
+
   // Guide methods
   getAllGuides(): Promise<Guide[]>;
   getGuidesBySkillLevel(level: string): Promise<Guide[]>;
@@ -24,33 +47,55 @@ export interface IStorage {
   createGuide(guide: InsertGuide): Promise<Guide>;
   updateGuide(id: number, guide: Partial<InsertGuide>): Promise<Guide>;
   deleteGuide(id: number): Promise<void>;
-  
+
   // Contact methods
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
   getAllContactMessages(): Promise<ContactMessage[]>;
   deleteContactMessage(id: number): Promise<void>;
-  
+
   // USCIS data methods
   getUscisData(): Promise<UscisData[]>;
-  updateUscisData(formType: string, fee: string, processingTime: string): Promise<UscisData>;
-  
+  updateUscisData(
+    formType: string,
+    fee: string,
+    processingTime: string
+  ): Promise<UscisData>;
+
   // Testimonial methods
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
-  
+
   // Translation order methods
-  createTranslationOrder(order: InsertTranslationOrder): Promise<TranslationOrder>;
-  getTranslationOrder(orderNumber: string): Promise<TranslationOrder | undefined>;
+  createTranslationOrder(
+    order: InsertTranslationOrder
+  ): Promise<TranslationOrder>;
+  getTranslationOrder(
+    orderNumber: string
+  ): Promise<TranslationOrder | undefined>;
   getAllTranslationOrders(): Promise<TranslationOrder[]>;
-  updateTranslationOrderStatus(orderNumber: string, status: string, adminNotes?: string, paymentIntentId?: string): Promise<TranslationOrder>;
-  updateTranslationOrderFiles(orderNumber: string, originalFilePath?: string, translatedFilePath?: string): Promise<TranslationOrder>;
+  updateTranslationOrderStatus(
+    orderNumber: string,
+    status: string,
+    adminNotes?: string,
+    paymentIntentId?: string
+  ): Promise<TranslationOrder>;
+  updateTranslationOrderFiles(
+    orderNumber: string,
+    originalFilePath?: string,
+    translatedFilePath?: string
+  ): Promise<TranslationOrder>;
   deleteTranslationOrder(orderNumber: string): Promise<void>;
 
   // Translation pricing methods
   getAllTranslationPricing(): Promise<TranslationPricing[]>;
   getActiveTranslationPricing(): Promise<TranslationPricing[]>;
   getTranslationPricing(id: number): Promise<TranslationPricing | undefined>;
-  createTranslationPricing(pricing: InsertTranslationPricing): Promise<TranslationPricing>;
-  updateTranslationPricing(id: number, pricing: Partial<InsertTranslationPricing>): Promise<TranslationPricing>;
+  createTranslationPricing(
+    pricing: InsertTranslationPricing
+  ): Promise<TranslationPricing>;
+  updateTranslationPricing(
+    id: number,
+    pricing: Partial<InsertTranslationPricing>
+  ): Promise<TranslationPricing>;
   deleteTranslationPricing(id: number): Promise<void>;
 }
 
@@ -93,62 +138,56 @@ export class MemStorage implements IStorage {
         id: 1,
         title: "Form I-130 Family Petition Guide",
         titleEs: "Guía de Petición Familiar I-130",
-        description: "Complete step-by-step guide for filing Form I-130 to petition for family members. Includes forms, checklists, and examples.",
-        descriptionEs: "Guía completa paso a paso para presentar el Formulario I-130 para peticionar familiares. Incluye formularios, listas de verificación y ejemplos.",
+        description:
+          "Complete step-by-step guide for filing Form I-130 to petition for family members. Includes forms, checklists, and examples.",
+        descriptionEs:
+          "Guía completa paso a paso para presentar el Formulario I-130 para peticionar familiares. Incluye formularios, listas de verificación y ejemplos.",
+        fileUrl: "https://example.com/guide1.pdf",
+        fileUrlEs: "https://example.com/guide1-es.pdf",
         formType: "I-130",
         price: "49.99",
         skillLevel: "beginner",
         featured: true,
         onlineFiling: false,
-        fileName: null,
-        fileContent: null,
-        fileType: null,
-        fileName2: null,
-        fileContent2: null,
-        fileType2: null,
         createdAt: new Date(),
       },
       {
         id: 2,
         title: "Form I-485 Adjustment of Status Guide",
         titleEs: "Guía de Ajuste de Estatus I-485",
-        description: "Comprehensive guide for adjusting status to permanent resident while in the United States. Detailed instructions included.",
-        descriptionEs: "Guía completa para ajustar el estatus a residente permanente mientras se encuentra en Estados Unidos. Instrucciones detalladas incluidas.",
+        description:
+          "Comprehensive guide for adjusting status to permanent resident while in the United States. Detailed instructions included.",
+        descriptionEs:
+          "Guía completa para ajustar el estatus a residente permanente mientras se encuentra en Estados Unidos. Instrucciones detalladas incluidas.",
+        fileUrl: "https://example.com/guide1.pdf",
+        fileUrlEs: "https://example.com/guide1-es.pdf",
         formType: "I-485",
         price: "59.99",
         skillLevel: "intermediate",
         featured: true,
         onlineFiling: false,
-        fileName: null,
-        fileContent: null,
-        fileType: null,
-        fileName2: null,
-        fileContent2: null,
-        fileType2: null,
         createdAt: new Date(),
       },
       {
         id: 3,
         title: "Form N-400 Naturalization Guide",
         titleEs: "Guía de Naturalización N-400",
-        description: "Complete naturalization guide with interview preparation, study materials, and application assistance.",
-        descriptionEs: "Guía completa de naturalización con preparación para entrevista, materiales de estudio y asistencia de aplicación.",
+        description:
+          "Complete naturalization guide with interview preparation, study materials, and application assistance.",
+        descriptionEs:
+          "Guía completa de naturalización con preparación para entrevista, materiales de estudio y asistencia de aplicación.",
+        fileUrl: "https://example.com/guide1.pdf",
+        fileUrlEs: "https://example.com/guide1-es.pdf",
         formType: "N-400",
         price: "69.99",
         skillLevel: "advanced",
         featured: true,
         onlineFiling: true,
-        fileName: null,
-        fileContent: null,
-        fileType: null,
-        fileName2: null,
-        fileContent2: null,
-        fileType2: null,
         createdAt: new Date(),
       },
     ];
 
-    sampleGuides.forEach(guide => {
+    sampleGuides.forEach((guide) => {
       this.guides.set(guide.id, guide);
     });
     this.currentGuideId = sampleGuides.length + 1;
@@ -185,7 +224,7 @@ export class MemStorage implements IStorage {
       },
     ];
 
-    sampleUscisData.forEach(data => {
+    sampleUscisData.forEach((data) => {
       this.uscisData.set(data.formType, data);
     });
   }
@@ -196,7 +235,7 @@ export class MemStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const users = Array.from(this.users.values());
-    return users.find(user => user.username === username);
+    return users.find((user) => user.username === username);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -206,7 +245,7 @@ export class MemStorage implements IStorage {
       ...insertUser,
       id,
       password: hashedPassword,
-      email: insertUser.email || null
+      email: insertUser.email || null,
     };
     this.users.set(id, user);
     return user;
@@ -214,7 +253,7 @@ export class MemStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     const users = Array.from(this.users.values());
-    return users.find(user => user.email === email);
+    return users.find((user) => user.email === email);
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -230,7 +269,7 @@ export class MemStorage implements IStorage {
     const updated: User = {
       ...existing,
       ...updateData,
-      id
+      id,
     };
 
     // Hash password if it's being updated
@@ -246,7 +285,10 @@ export class MemStorage implements IStorage {
     this.users.delete(id);
   }
 
-  async authenticateUser(username: string, password: string): Promise<User | null> {
+  async authenticateUser(
+    username: string,
+    password: string
+  ): Promise<User | null> {
     const user = await this.getUserByUsername(username);
     if (!user) {
       return null;
@@ -266,11 +308,13 @@ export class MemStorage implements IStorage {
   }
 
   async getGuidesBySkillLevel(level: string): Promise<Guide[]> {
-    return Array.from(this.guides.values()).filter(guide => guide.skillLevel === level);
+    return Array.from(this.guides.values()).filter(
+      (guide) => guide.skillLevel === level
+    );
   }
 
   async getFeaturedGuides(): Promise<Guide[]> {
-    return Array.from(this.guides.values()).filter(guide => guide.featured);
+    return Array.from(this.guides.values()).filter((guide) => guide.featured);
   }
 
   async getGuide(id: number): Promise<Guide | undefined> {
@@ -279,36 +323,33 @@ export class MemStorage implements IStorage {
 
   async createGuide(insertGuide: InsertGuide): Promise<Guide> {
     const id = this.currentGuideId++;
-    const guide: Guide = { 
-      ...insertGuide, 
-      id, 
+    const guide: Guide = {
+      ...insertGuide,
+      id,
       createdAt: new Date(),
       featured: insertGuide.featured ?? false,
       onlineFiling: insertGuide.onlineFiling ?? false,
-      fileName: insertGuide.fileName ?? null,
-      fileContent: insertGuide.fileContent ?? null,
-      fileType: insertGuide.fileType ?? null,
-      fileName2: insertGuide.fileName2 ?? null,
-      fileContent2: insertGuide.fileContent2 ?? null,
-      fileType2: insertGuide.fileType2 ?? null
     };
     this.guides.set(id, guide);
     return guide;
   }
 
-  async updateGuide(id: number, updateData: Partial<InsertGuide>): Promise<Guide> {
+  async updateGuide(
+    id: number,
+    updateData: Partial<InsertGuide>
+  ): Promise<Guide> {
     const existing = this.guides.get(id);
     if (!existing) {
       throw new Error(`Guide ${id} not found`);
     }
-    
+
     const updated: Guide = {
       ...existing,
       ...updateData,
       id,
-      createdAt: existing.createdAt
+      createdAt: existing.createdAt,
     };
-    
+
     this.guides.set(id, updated);
     return updated;
   }
@@ -317,14 +358,16 @@ export class MemStorage implements IStorage {
     this.guides.delete(id);
   }
 
-  async createContactMessage(insertMessage: InsertContactMessage): Promise<ContactMessage> {
+  async createContactMessage(
+    insertMessage: InsertContactMessage
+  ): Promise<ContactMessage> {
     const id = this.currentContactId++;
-    const message: ContactMessage = { 
-      ...insertMessage, 
-      id, 
+    const message: ContactMessage = {
+      ...insertMessage,
+      id,
       createdAt: new Date(),
       phone: insertMessage.phone || null,
-      formType: insertMessage.formType || null
+      formType: insertMessage.formType || null,
     };
     this.contactMessages.set(id, message);
     return message;
@@ -346,10 +389,14 @@ export class MemStorage implements IStorage {
     return Array.from(this.uscisData.values());
   }
 
-  async updateUscisData(formType: string, fee: string, processingTime: string): Promise<UscisData> {
+  async updateUscisData(
+    formType: string,
+    fee: string,
+    processingTime: string
+  ): Promise<UscisData> {
     const existing = this.uscisData.get(formType);
     const id = existing?.id || Date.now();
-    
+
     const updated: UscisData = {
       id,
       formType,
@@ -357,15 +404,17 @@ export class MemStorage implements IStorage {
       processingTime,
       lastUpdated: new Date(),
     };
-    
+
     this.uscisData.set(formType, updated);
     return updated;
   }
 
-  async createTestimonial(insertTestimonial: InsertTestimonial): Promise<Testimonial> {
+  async createTestimonial(
+    insertTestimonial: InsertTestimonial
+  ): Promise<Testimonial> {
     const id = this.currentTestimonialId++;
-    const testimonial: Testimonial = { 
-      id, 
+    const testimonial: Testimonial = {
+      id,
       name: insertTestimonial.name,
       email: insertTestimonial.email,
       caseType: insertTestimonial.caseType,
@@ -373,15 +422,17 @@ export class MemStorage implements IStorage {
       testimonial: insertTestimonial.testimonial,
       timeline: insertTestimonial.timeline || null,
       allowContact: insertTestimonial.allowContact || null,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
-    
+
     this.testimonials.set(id, testimonial);
     return testimonial;
   }
 
   // Translation order methods for MemStorage
-  async createTranslationOrder(orderData: InsertTranslationOrder): Promise<TranslationOrder> {
+  async createTranslationOrder(
+    orderData: InsertTranslationOrder
+  ): Promise<TranslationOrder> {
     const id = this.currentTranslationOrderId++;
     const order: TranslationOrder = {
       id,
@@ -401,14 +452,16 @@ export class MemStorage implements IStorage {
       adminNotes: orderData.adminNotes || null,
       paymentIntentId: orderData.paymentIntentId || null,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
-    
+
     this.translationOrders.set(orderData.orderNumber, order);
     return order;
   }
 
-  async getTranslationOrder(orderNumber: string): Promise<TranslationOrder | undefined> {
+  async getTranslationOrder(
+    orderNumber: string
+  ): Promise<TranslationOrder | undefined> {
     return this.translationOrders.get(orderNumber);
   }
 
@@ -420,37 +473,53 @@ export class MemStorage implements IStorage {
     });
   }
 
-  async updateTranslationOrderStatus(orderNumber: string, status: string, adminNotes?: string, paymentIntentId?: string): Promise<TranslationOrder> {
+  async updateTranslationOrderStatus(
+    orderNumber: string,
+    status: string,
+    adminNotes?: string,
+    paymentIntentId?: string
+  ): Promise<TranslationOrder> {
     const order = this.translationOrders.get(orderNumber);
     if (!order) {
       throw new Error(`Translation order ${orderNumber} not found`);
     }
-    
+
     const updatedOrder = {
       ...order,
       status,
       adminNotes: adminNotes !== undefined ? adminNotes : order.adminNotes,
-      paymentIntentId: paymentIntentId !== undefined ? paymentIntentId : order.paymentIntentId,
-      updatedAt: new Date()
+      paymentIntentId:
+        paymentIntentId !== undefined ? paymentIntentId : order.paymentIntentId,
+      updatedAt: new Date(),
     };
-    
+
     this.translationOrders.set(orderNumber, updatedOrder);
     return updatedOrder;
   }
 
-  async updateTranslationOrderFiles(orderNumber: string, originalFilePath?: string, translatedFilePath?: string): Promise<TranslationOrder> {
+  async updateTranslationOrderFiles(
+    orderNumber: string,
+    originalFilePath?: string,
+    translatedFilePath?: string
+  ): Promise<TranslationOrder> {
     const order = this.translationOrders.get(orderNumber);
     if (!order) {
       throw new Error(`Translation order ${orderNumber} not found`);
     }
-    
+
     const updatedOrder = {
       ...order,
-      originalFilePath: originalFilePath !== undefined ? originalFilePath : order.originalFilePath,
-      translatedFilePath: translatedFilePath !== undefined ? translatedFilePath : order.translatedFilePath,
-      updatedAt: new Date()
+      originalFilePath:
+        originalFilePath !== undefined
+          ? originalFilePath
+          : order.originalFilePath,
+      translatedFilePath:
+        translatedFilePath !== undefined
+          ? translatedFilePath
+          : order.translatedFilePath,
+      updatedAt: new Date(),
     };
-    
+
     this.translationOrders.set(orderNumber, updatedOrder);
     return updatedOrder;
   }
@@ -465,14 +534,20 @@ export class MemStorage implements IStorage {
   }
 
   async getActiveTranslationPricing(): Promise<TranslationPricing[]> {
-    return Array.from(this.translationPricing.values()).filter(pricing => pricing.active);
+    return Array.from(this.translationPricing.values()).filter(
+      (pricing) => pricing.active
+    );
   }
 
-  async getTranslationPricing(id: number): Promise<TranslationPricing | undefined> {
+  async getTranslationPricing(
+    id: number
+  ): Promise<TranslationPricing | undefined> {
     return this.translationPricing.get(id);
   }
 
-  async createTranslationPricing(pricingData: InsertTranslationPricing): Promise<TranslationPricing> {
+  async createTranslationPricing(
+    pricingData: InsertTranslationPricing
+  ): Promise<TranslationPricing> {
     const id = this.currentTranslationPricingId++;
     const pricing: TranslationPricing = {
       id,
@@ -484,13 +559,16 @@ export class MemStorage implements IStorage {
       descriptionEs: pricingData.descriptionEs,
       active: pricingData.active ?? true,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
     this.translationPricing.set(id, pricing);
     return pricing;
   }
 
-  async updateTranslationPricing(id: number, updateData: Partial<InsertTranslationPricing>): Promise<TranslationPricing> {
+  async updateTranslationPricing(
+    id: number,
+    updateData: Partial<InsertTranslationPricing>
+  ): Promise<TranslationPricing> {
     const existing = this.translationPricing.get(id);
     if (!existing) {
       throw new Error(`Translation pricing ${id} not found`);
@@ -500,7 +578,7 @@ export class MemStorage implements IStorage {
       ...existing,
       ...updateData,
       id,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.translationPricing.set(id, updated);
@@ -528,8 +606,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-130 Family Petition Guide",
           titleEs: "Guía de Petición Familiar I-130",
-          description: "Complete step-by-step guide for filing Form I-130 to petition for family members. Includes forms, checklists, and examples.",
-          descriptionEs: "Guía completa paso a paso para presentar el Formulario I-130 para peticionar familiares. Incluye formularios, listas de verificación y ejemplos.",
+          description:
+            "Complete step-by-step guide for filing Form I-130 to petition for family members. Includes forms, checklists, and examples.",
+          descriptionEs:
+            "Guía completa paso a paso para presentar el Formulario I-130 para peticionar familiares. Incluye formularios, listas de verificación y ejemplos.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-130",
           price: "49.99",
           skillLevel: "beginner",
@@ -539,8 +621,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-485 Adjustment of Status Guide",
           titleEs: "Guía de Ajuste de Estatus I-485",
-          description: "Comprehensive guide for adjusting status to permanent resident while in the United States. Detailed instructions included.",
-          descriptionEs: "Guía completa para ajustar el estatus a residente permanente mientras se encuentra en Estados Unidos. Instrucciones detalladas incluidas.",
+          description:
+            "Comprehensive guide for adjusting status to permanent resident while in the United States. Detailed instructions included.",
+          descriptionEs:
+            "Guía completa para ajustar el estatus a residente permanente mientras se encuentra en Estados Unidos. Instrucciones detalladas incluidas.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-485",
           price: "59.99",
           skillLevel: "intermediate",
@@ -550,8 +636,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form N-400 Naturalization Guide",
           titleEs: "Guía de Naturalización N-400",
-          description: "Complete naturalization guide with interview preparation, study materials, and application assistance.",
-          descriptionEs: "Guía completa de naturalización con preparación para entrevista, materiales de estudio y asistencia de aplicación.",
+          description:
+            "Complete naturalization guide with interview preparation, study materials, and application assistance.",
+          descriptionEs:
+            "Guía completa de naturalización con preparación para entrevista, materiales de estudio y asistencia de aplicación.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "N-400",
           price: "69.99",
           skillLevel: "advanced",
@@ -561,8 +651,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-765 Work Authorization Guide",
           titleEs: "Guía de Autorización de Trabajo I-765",
-          description: "Step-by-step instructions for applying for employment authorization document (EAD). Includes eligibility categories and required documentation.",
-          descriptionEs: "Instrucciones paso a paso para solicitar el documento de autorización de empleo (EAD). Incluye categorías de elegibilidad y documentación requerida.",
+          description:
+            "Step-by-step instructions for applying for employment authorization document (EAD). Includes eligibility categories and required documentation.",
+          descriptionEs:
+            "Instrucciones paso a paso para solicitar el documento de autorización de empleo (EAD). Incluye categorías de elegibilidad y documentación requerida.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-765",
           price: "39.99",
           skillLevel: "beginner",
@@ -572,8 +666,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-131 Travel Document Guide",
           titleEs: "Guía de Documento de Viaje I-131",
-          description: "Complete guide for applying for re-entry permits, refugee travel documents, and advance parole. Essential for international travel.",
-          descriptionEs: "Guía completa para solicitar permisos de reingreso, documentos de viaje para refugiados y libertad condicional anticipada. Esencial para viajes internacionales.",
+          description:
+            "Complete guide for applying for re-entry permits, refugee travel documents, and advance parole. Essential for international travel.",
+          descriptionEs:
+            "Guía completa para solicitar permisos de reingreso, documentos de viaje para refugiados y libertad condicional anticipada. Esencial para viajes internacionales.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-131",
           price: "44.99",
           skillLevel: "intermediate",
@@ -583,8 +681,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-751 Remove Conditions Guide",
           titleEs: "Guía para Remover Condiciones I-751",
-          description: "Detailed instructions for removing conditions on permanent residence based on marriage. Includes evidence requirements and timeline.",
-          descriptionEs: "Instrucciones detalladas para remover las condiciones de la residencia permanente basada en matrimonio. Incluye requisitos de evidencia y cronograma.",
+          description:
+            "Detailed instructions for removing conditions on permanent residence based on marriage. Includes evidence requirements and timeline.",
+          descriptionEs:
+            "Instrucciones detalladas para remover las condiciones de la residencia permanente basada en matrimonio. Incluye requisitos de evidencia y cronograma.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-751",
           price: "54.99",
           skillLevel: "intermediate",
@@ -594,8 +696,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-90 Green Card Renewal Guide",
           titleEs: "Guía de Renovación de Tarjeta Verde I-90",
-          description: "Simple guide for renewing or replacing your permanent resident card. Covers all scenarios including lost, stolen, or expired cards.",
-          descriptionEs: "Guía simple para renovar o reemplazar su tarjeta de residente permanente. Cubre todos los escenarios incluyendo tarjetas perdidas, robadas o vencidas.",
+          description:
+            "Simple guide for renewing or replacing your permanent resident card. Covers all scenarios including lost, stolen, or expired cards.",
+          descriptionEs:
+            "Guía simple para renovar o reemplazar su tarjeta de residente permanente. Cubre todos los escenarios incluyendo tarjetas perdidas, robadas o vencidas.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-90",
           price: "34.99",
           skillLevel: "beginner",
@@ -605,8 +711,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-864 Affidavit of Support Guide",
           titleEs: "Guía de Declaración Jurada de Apoyo I-864",
-          description: "Comprehensive guide for sponsors filing affidavit of support. Includes income requirements, co-sponsor guidelines, and supporting documents.",
-          descriptionEs: "Guía completa para patrocinadores que presentan declaración jurada de apoyo. Incluye requisitos de ingresos, pautas de co-patrocinador y documentos de apoyo.",
+          description:
+            "Comprehensive guide for sponsors filing affidavit of support. Includes income requirements, co-sponsor guidelines, and supporting documents.",
+          descriptionEs:
+            "Guía completa para patrocinadores que presentan declaración jurada de apoyo. Incluye requisitos de ingresos, pautas de co-patrocinador y documentos de apoyo.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-864",
           price: "47.99",
           skillLevel: "intermediate",
@@ -616,8 +726,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-129F Fiancé Visa Guide",
           titleEs: "Guía de Visa de Prometido I-129F",
-          description: "Complete K-1 fiancé visa petition guide with timeline, requirements, and interview preparation. Includes adjustment of status after marriage.",
-          descriptionEs: "Guía completa de petición de visa K-1 de prometido con cronograma, requisitos y preparación para entrevista. Incluye ajuste de estatus después del matrimonio.",
+          description:
+            "Complete K-1 fiancé visa petition guide with timeline, requirements, and interview preparation. Includes adjustment of status after marriage.",
+          descriptionEs:
+            "Guía completa de petición de visa K-1 de prometido con cronograma, requisitos y preparación para entrevista. Incluye ajuste de estatus después del matrimonio.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-129F",
           price: "64.99",
           skillLevel: "advanced",
@@ -627,8 +741,12 @@ export class DatabaseStorage implements IStorage {
         {
           title: "Form I-601 Waiver Application Guide",
           titleEs: "Guía de Solicitud de Exención I-601",
-          description: "Advanced guide for waiver of grounds of inadmissibility. Covers extreme hardship standards, evidence compilation, and legal strategies.",
-          descriptionEs: "Guía avanzada para exención de causales de inadmisibilidad. Cubre estándares de dificultades extremas, compilación de evidencia y estrategias legales.",
+          description:
+            "Advanced guide for waiver of grounds of inadmissibility. Covers extreme hardship standards, evidence compilation, and legal strategies.",
+          descriptionEs:
+            "Guía avanzada para exención de causales de inadmisibilidad. Cubre estándares de dificultades extremas, compilación de evidencia y estrategias legales.",
+          fileUrl: "https://example.com/guide1.pdf",
+          fileUrlEs: "https://example.com/guide1-es.pdf",
           formType: "I-601",
           price: "89.99",
           skillLevel: "advanced",
@@ -639,7 +757,10 @@ export class DatabaseStorage implements IStorage {
 
       // Insert sample guides (only if they don't already exist)
       for (const guide of sampleGuides) {
-        const existingGuide = await db.select().from(guides).where(eq(guides.formType, guide.formType));
+        const existingGuide = await db
+          .select()
+          .from(guides)
+          .where(eq(guides.formType, guide.formType));
         if (existingGuide.length === 0) {
           await this.createGuide(guide);
           console.log(`✅ Added guide: ${guide.title}`);
@@ -655,33 +776,42 @@ export class DatabaseStorage implements IStorage {
           pricePerPage: "15.00",
           minimumPrice: "25.00",
           deliveryDays: 2,
-          description: "Standard translation service with 48-hour delivery. Professional quality guaranteed.",
-          descriptionEs: "Servicio de traducción estándar con entrega en 48 horas. Calidad profesional garantizada.",
-          active: true
+          description:
+            "Standard translation service with 48-hour delivery. Professional quality guaranteed.",
+          descriptionEs:
+            "Servicio de traducción estándar con entrega en 48 horas. Calidad profesional garantizada.",
+          active: true,
         },
         {
           serviceType: "rush",
           pricePerPage: "25.00",
           minimumPrice: "40.00",
           deliveryDays: 1,
-          description: "Rush translation service with 24-hour delivery. Priority processing for urgent documents.",
-          descriptionEs: "Servicio de traducción urgente con entrega en 24 horas. Procesamiento prioritario para documentos urgentes.",
-          active: true
+          description:
+            "Rush translation service with 24-hour delivery. Priority processing for urgent documents.",
+          descriptionEs:
+            "Servicio de traducción urgente con entrega en 24 horas. Procesamiento prioritario para documentos urgentes.",
+          active: true,
         },
         {
           serviceType: "certified",
           pricePerPage: "35.00",
           minimumPrice: "60.00",
           deliveryDays: 3,
-          description: "Certified translation service with notarized certification. Accepted by USCIS and courts.",
-          descriptionEs: "Servicio de traducción certificada con certificación notarizada. Aceptado por USCIS y tribunales.",
-          active: true
-        }
+          description:
+            "Certified translation service with notarized certification. Accepted by USCIS and courts.",
+          descriptionEs:
+            "Servicio de traducción certificada con certificación notarizada. Aceptado por USCIS y tribunales.",
+          active: true,
+        },
       ];
 
       // Insert sample pricing (only if they don't already exist)
       for (const pricing of samplePricing) {
-        const existingPricing = await db.select().from(translationPricing).where(eq(translationPricing.serviceType, pricing.serviceType));
+        const existingPricing = await db
+          .select()
+          .from(translationPricing)
+          .where(eq(translationPricing.serviceType, pricing.serviceType));
         if (existingPricing.length === 0) {
           await this.createTranslationPricing(pricing);
           console.log(`Added pricing: ${pricing.serviceType}`);
@@ -691,14 +821,16 @@ export class DatabaseStorage implements IStorage {
       console.log("Sample translation pricing data inserted successfully");
 
       // Create default admin user if it doesn't exist
-      const existingAdmin = await this.getUserByUsername('admin');
+      const existingAdmin = await this.getUserByUsername("admin");
       if (!existingAdmin) {
         await this.createUser({
-          username: 'admin',
-          password: 'admin123', // This will be hashed
-          email: 'admin@example.com'
+          username: "admin",
+          password: "admin123", // This will be hashed
+          email: "admin@example.com",
         });
-        console.log("Default admin user created (username: admin, password: admin123)");
+        console.log(
+          "Default admin user created (username: admin, password: admin123)"
+        );
       }
     } catch (error) {
       console.error("Error inserting sample data:", error);
@@ -706,7 +838,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Translation order methods
-  async createTranslationOrder(orderData: InsertTranslationOrder): Promise<TranslationOrder> {
+  async createTranslationOrder(
+    orderData: InsertTranslationOrder
+  ): Promise<TranslationOrder> {
     const [order] = await db
       .insert(translationOrders)
       .values(orderData)
@@ -714,7 +848,9 @@ export class DatabaseStorage implements IStorage {
     return order;
   }
 
-  async getTranslationOrder(orderNumber: string): Promise<TranslationOrder | undefined> {
+  async getTranslationOrder(
+    orderNumber: string
+  ): Promise<TranslationOrder | undefined> {
     const [order] = await db
       .select()
       .from(translationOrders)
@@ -729,7 +865,12 @@ export class DatabaseStorage implements IStorage {
       .orderBy(translationOrders.createdAt);
   }
 
-  async updateTranslationOrderStatus(orderNumber: string, status: string, adminNotes?: string, paymentIntentId?: string): Promise<TranslationOrder> {
+  async updateTranslationOrderStatus(
+    orderNumber: string,
+    status: string,
+    adminNotes?: string,
+    paymentIntentId?: string
+  ): Promise<TranslationOrder> {
     const updateData: any = { status, updatedAt: new Date() };
     if (adminNotes !== undefined) {
       updateData.adminNotes = adminNotes;
@@ -746,7 +887,11 @@ export class DatabaseStorage implements IStorage {
     return order;
   }
 
-  async updateTranslationOrderFiles(orderNumber: string, originalFilePath?: string, translatedFilePath?: string): Promise<TranslationOrder> {
+  async updateTranslationOrderFiles(
+    orderNumber: string,
+    originalFilePath?: string,
+    translatedFilePath?: string
+  ): Promise<TranslationOrder> {
     const updateData: any = { updatedAt: new Date() };
     if (originalFilePath !== undefined) {
       updateData.originalFilePath = originalFilePath;
@@ -776,7 +921,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return user;
   }
 
@@ -786,7 +934,7 @@ export class DatabaseStorage implements IStorage {
       .insert(users)
       .values({
         ...insertUser,
-        password: hashedPassword
+        password: hashedPassword,
       })
       .returning();
     return user;
@@ -818,12 +966,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUser(id: number): Promise<void> {
-    await db
-      .delete(users)
-      .where(eq(users.id, id));
+    await db.delete(users).where(eq(users.id, id));
   }
 
-  async authenticateUser(username: string, password: string): Promise<User | null> {
+  async authenticateUser(
+    username: string,
+    password: string
+  ): Promise<User | null> {
     const user = await this.getUserByUsername(username);
     if (!user) {
       return null;
@@ -857,14 +1006,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createGuide(insertGuide: InsertGuide): Promise<Guide> {
-    const [guide] = await db
-      .insert(guides)
-      .values(insertGuide)
-      .returning();
+    const [guide] = await db.insert(guides).values(insertGuide).returning();
     return guide;
   }
 
-  async updateGuide(id: number, updateData: Partial<InsertGuide>): Promise<Guide> {
+  async updateGuide(
+    id: number,
+    updateData: Partial<InsertGuide>
+  ): Promise<Guide> {
     const [guide] = await db
       .update(guides)
       .set(updateData)
@@ -874,13 +1023,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteGuide(id: number): Promise<void> {
-    await db
-      .delete(guides)
-      .where(eq(guides.id, id));
+    await db.delete(guides).where(eq(guides.id, id));
   }
 
   // Contact methods
-  async createContactMessage(insertMessage: InsertContactMessage): Promise<ContactMessage> {
+  async createContactMessage(
+    insertMessage: InsertContactMessage
+  ): Promise<ContactMessage> {
     const [message] = await db
       .insert(contactMessages)
       .values(insertMessage)
@@ -896,9 +1045,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteContactMessage(id: number): Promise<void> {
-    await db
-      .delete(contactMessages)
-      .where(eq(contactMessages.id, id));
+    await db.delete(contactMessages).where(eq(contactMessages.id, id));
   }
 
   // USCIS data methods
@@ -906,7 +1053,11 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(uscisData);
   }
 
-  async updateUscisData(formType: string, fee: string, processingTime: string): Promise<UscisData> {
+  async updateUscisData(
+    formType: string,
+    fee: string,
+    processingTime: string
+  ): Promise<UscisData> {
     const [data] = await db
       .update(uscisData)
       .set({
@@ -920,7 +1071,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Testimonial methods
-  async createTestimonial(insertTestimonial: InsertTestimonial): Promise<Testimonial> {
+  async createTestimonial(
+    insertTestimonial: InsertTestimonial
+  ): Promise<Testimonial> {
     const [testimonial] = await db
       .insert(testimonials)
       .values(insertTestimonial)
@@ -934,15 +1087,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveTranslationPricing(): Promise<TranslationPricing[]> {
-    return await db.select().from(translationPricing).where(eq(translationPricing.active, true));
+    return await db
+      .select()
+      .from(translationPricing)
+      .where(eq(translationPricing.active, true));
   }
 
-  async getTranslationPricing(id: number): Promise<TranslationPricing | undefined> {
-    const [pricing] = await db.select().from(translationPricing).where(eq(translationPricing.id, id));
+  async getTranslationPricing(
+    id: number
+  ): Promise<TranslationPricing | undefined> {
+    const [pricing] = await db
+      .select()
+      .from(translationPricing)
+      .where(eq(translationPricing.id, id));
     return pricing;
   }
 
-  async createTranslationPricing(pricingData: InsertTranslationPricing): Promise<TranslationPricing> {
+  async createTranslationPricing(
+    pricingData: InsertTranslationPricing
+  ): Promise<TranslationPricing> {
     const [pricing] = await db
       .insert(translationPricing)
       .values(pricingData)
@@ -950,7 +1113,10 @@ export class DatabaseStorage implements IStorage {
     return pricing;
   }
 
-  async updateTranslationPricing(id: number, updateData: Partial<InsertTranslationPricing>): Promise<TranslationPricing> {
+  async updateTranslationPricing(
+    id: number,
+    updateData: Partial<InsertTranslationPricing>
+  ): Promise<TranslationPricing> {
     const [pricing] = await db
       .update(translationPricing)
       .set({ ...updateData, updatedAt: new Date() })
@@ -960,21 +1126,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteTranslationPricing(id: number): Promise<void> {
-    await db
-      .delete(translationPricing)
-      .where(eq(translationPricing.id, id));
+    await db.delete(translationPricing).where(eq(translationPricing.id, id));
   }
 }
 
 // Initialize storage system based on database availability
 console.log("🔄 Initializing storage system...");
 console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
-console.log("DATABASE_URL value:", process.env.DATABASE_URL ? process.env.DATABASE_URL.replace(/:[^:@]*@/, ':***@') : 'undefined');
+console.log(
+  "DATABASE_URL value:",
+  process.env.DATABASE_URL
+    ? process.env.DATABASE_URL.replace(/:[^:@]*@/, ":***@")
+    : "undefined"
+);
 
 // Use MemStorage for development when DATABASE_URL is not properly configured
-const hasValidDatabase = process.env.DATABASE_URL && 
-  !process.env.DATABASE_URL.includes('placeholder') && 
-  process.env.DATABASE_URL.startsWith('postgresql://');
+const hasValidDatabase =
+  process.env.DATABASE_URL &&
+  !process.env.DATABASE_URL.includes("placeholder") &&
+  process.env.DATABASE_URL.startsWith("postgresql://");
 
 let storage: IStorage;
 
@@ -983,7 +1153,9 @@ if (hasValidDatabase) {
   console.log("✅ Using DatabaseStorage for all operations");
 } else {
   storage = new MemStorage();
-  console.log("✅ Using MemStorage for development (no valid DATABASE_URL found)");
+  console.log(
+    "✅ Using MemStorage for development (no valid DATABASE_URL found)"
+  );
 }
 
 export { storage };

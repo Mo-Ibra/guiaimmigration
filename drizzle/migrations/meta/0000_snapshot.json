@@ -1,5 +1,5 @@
 {
-  "id": "af06a744-151f-4f74-8701-9e903a3128ff",
+  "id": "19f4c5f7-f607-41f4-94cf-eb6522932ec2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -100,6 +100,18 @@
           "primaryKey": false,
           "notNull": true
         },
+        "file_url": {
+          "name": "file_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_url_es": {
+          "name": "file_url_es",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "form_type": {
           "name": "form_type",
           "type": "text",
@@ -131,42 +143,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": false
-        },
-        "file_name": {
-          "name": "file_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "file_content": {
-          "name": "file_content",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "file_type": {
-          "name": "file_type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "file_name_2": {
-          "name": "file_name_2",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "file_content_2": {
-          "name": "file_content_2",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "file_type_2": {
-          "name": "file_type_2",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "created_at": {
           "name": "created_at",

@@ -17,19 +17,13 @@ export const guides = pgTable("guides", {
   titleEs: text("title_es").notNull(),
   description: text("description").notNull(),
   descriptionEs: text("description_es").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileUrlEs: text("file_url_es").notNull(),
   formType: text("form_type").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   skillLevel: text("skill_level").notNull(), // beginner, intermediate, advanced
   featured: boolean("featured").default(false),
   onlineFiling: boolean("online_filing").default(false),
-  // Primary file (Attachment 1)
-  fileName: text("file_name"), // Original filename
-  fileContent: text("file_content"), // Base64 encoded file content
-  fileType: text("file_type"), // MIME type
-  // Secondary file (Attachment 2)
-  fileName2: text("file_name_2"), // Original filename for second attachment
-  fileContent2: text("file_content_2"), // Base64 encoded file content for second attachment
-  fileType2: text("file_type_2"), // MIME type for second attachment
   createdAt: timestamp("created_at").defaultNow(),
 });
 
