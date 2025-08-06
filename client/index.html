@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>ImmigrationGuides Pro - Your Trusted Immigration Resource Center</title>
+    <meta name="title" content="ImmigrationGuides Pro - Your Trusted Immigration Resource Center">
+    <meta name="description" content="Professional immigration guides, forms, and resources. Expert-crafted PDF packages for I-130, I-485, N-400 and more. Bilingual support in English and Spanish.">
+    <meta name="keywords" content="immigration forms, I-130 guide, immigration help, USCIS forms, bilingual immigration resources, Hispanic immigration, family petition, adjustment of status, naturalization">
+    <meta name="author" content="ImmigrationGuides Pro">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://immigrationguidespro.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://immigrationguidespro.com">
+    <meta property="og:title" content="ImmigrationGuides Pro - Trusted Immigration Resources">
+    <meta property="og:description" content="Expert immigration guides and forms to help you navigate the process with confidence. Available in English and Spanish.">
+    <meta property="og:image" content="https://immigrationguidespro.com/og-image.jpg">
+    <meta property="og:site_name" content="ImmigrationGuides Pro">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="es_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://immigrationguidespro.com">
+    <meta property="twitter:title" content="ImmigrationGuides Pro - Trusted Immigration Resources">
+    <meta property="twitter:description" content="Expert immigration guides and forms to help you navigate the process with confidence. Available in English and Spanish.">
+    <meta property="twitter:image" content="https://immigrationguidespro.com/og-image.jpg">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ImmigrationGuides Pro",
+      "url": "https://immigrationguidespro.com",
+      "logo": "https://immigrationguidespro.com/logo.png",
+      "description": "Professional immigration guides and resources for the Hispanic community",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "US"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "1-800-IMMIGRATION",
+        "contactType": "customer service",
+        "email": "support@immigrationguidespro.com",
+        "availableLanguage": ["English", "Spanish"]
+      },
+      "sameAs": [
+        "https://facebook.com/immigrationguidespro",
+        "https://twitter.com/immigrationguidespro"
+      ]
+    }
+    </script>
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://js.stripe.com">
+    
+    <!-- Google Fonts - Inter font family -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#2563EB">
+    <meta name="msapplication-TileColor" content="#2563EB">
+    
+    <!-- Security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Language alternates for SEO -->
+    <link rel="alternate" hreflang="en" href="https://immigrationguidespro.com">
+    <link rel="alternate" hreflang="es" href="https://immigrationguidespro.com?lang=es">
+    <link rel="alternate" hreflang="x-default" href="https://immigrationguidespro.com">
+    
+    <!-- Performance optimization -->
+    <link rel="dns-prefetch" href="//api.openai.com">
+    <link rel="dns-prefetch" href="//api.stripe.com">
+    
+    <style>
+      /* Critical CSS for above-the-fold content */
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9fafb;
+        color: #111827;
+        line-height: 1.6;
+      }
+      
+      /* Loading spinner for initial page load */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e5e7eb;
+        border-top: 4px solid #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 9999;
+      }
+      
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+      
+      /* Hide loading spinner once content loads */
+      .loaded .loading-spinner {
+        display: none;
+      }
+      
+      /* Show content immediately for debugging */
+      #root {
+        opacity: 1;
+        min-height: 100vh;
+      }
+      
+      /* Emergency fallback if React fails */
+      #root:empty::before {
+        content: "Loading React app... If this message persists, there may be a JavaScript error.";
+        display: block;
+        padding: 20px;
+        text-align: center;
+        color: #666;
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading spinner -->
+    <div class="loading-spinner"></div>
+    
+    <!-- Main application container -->
+    <div id="root"></div>
+    
+    <!-- React application entry point -->
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Remove loading spinner once page loads -->
+    <script>
+      window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+      });
+      
+      // Fallback to remove spinner after 3 seconds
+      setTimeout(function() {
+        document.body.classList.add('loaded');
+      }, 3000);
+    </script>
+    
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    
+    <!-- Google Analytics (placeholder - replace with actual tracking ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+  </body>
+</html>

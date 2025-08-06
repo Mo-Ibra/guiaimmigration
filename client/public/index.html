@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImmigrationGuides Pro - FIXED VERSION WITH FEATURES</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .header { background: #2563eb; color: white; padding: 1rem; text-align: center; }
+        .hero { background: #f0f9ff; padding: 4rem 2rem; text-align: center; }
+        .guides { padding: 4rem 2rem; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .guide-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { background: #059669; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; }
+        .btn:hover { background: #047857; }
+        .btn-primary { background: #2563eb; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .price { font-size: 1.5rem; font-weight: bold; color: #059669; margin: 1rem 0; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 2rem; margin-bottom: 2rem; }
+        h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>ImmigrationGuides Pro</h1>
+            <p>Your Trusted Immigration Resource Center</p>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Navigate Immigration with <span style="color: #2563eb;">Confidence</span></h1>
+            <p style="font-size: 1.25rem; margin-bottom: 2rem; color: #6b7280;">Professional immigration guides, forms, and resources. Expert-crafted PDF packages for I-130, I-485, N-400 and more.</p>
+            <button class="btn btn-primary" onclick="scrollToGuides()">Browse Our Guides</button>
+        </div>
+    </section>
+
+    <section class="guides" id="guides">
+        <div class="container">
+            <h2 style="text-align: center;">Featured Immigration Guides</h2>
+            <div class="guide-grid" id="guide-list">
+                <div class="guide-card">
+                    <div style="background: #dcfce7; color: #166534; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem;">BEGINNER</div>
+                    <div style="background: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem; margin-left: 0.5rem;">📄 PAPER FILING ONLY</div>
+                    <h3>Form I-130 Complete Guide</h3>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Comprehensive step-by-step guide for filing Form I-130 (Petition for Alien Relative). Includes forms, checklists, and examples.</p>
+                    <div class="price">$49.99</div>
+                    <button class="btn" onclick="buyGuide(1, 'Form I-130 Complete Guide', 49.99)">Buy Now</button>
+                </div>
+
+                <div class="guide-card">
+                    <div style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem;">INTERMEDIATE</div>
+                    <div style="background: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem; margin-left: 0.5rem;">📄 PAPER FILING ONLY</div>
+                    <h3>Form I-485 Adjustment Guide</h3>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Complete guide for adjusting status to permanent resident while in the United States. Detailed instructions included.</p>
+                    <div class="price">$59.99</div>
+                    <button class="btn" onclick="buyGuide(2, 'Form I-485 Adjustment Guide', 59.99)">Buy Now</button>
+                </div>
+
+                <div class="guide-card">
+                    <div style="background: #fecaca; color: #991b1b; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem;">ADVANCED</div>
+                    <div style="background: #dcfdf4; color: #065f46; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem; margin-left: 0.5rem;">💻 ONLINE FILING AVAILABLE</div>
+                    <h3>Form N-400 Naturalization Guide</h3>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Comprehensive naturalization guide with interview preparation, study materials, and application assistance.</p>
+                    <div class="price">$69.99</div>
+                    <button class="btn" onclick="buyGuide(3, 'Form N-400 Naturalization Guide', 69.99)">Buy Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: #f9fafb; padding: 4rem 2rem;">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 3rem;">Essential Immigration Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+                
+                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
+                    <h3 style="margin-bottom: 1rem;">I-864P Poverty Guidelines</h3>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Official HHS Poverty Guidelines for Form I-864 Affidavit of Support calculations. Updated annually by the Department of Health and Human Services.</p>
+                    <a href="https://www.uscis.gov/i-864p" target="_blank" rel="noopener noreferrer" 
+                       style="background: #2563eb; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
+                        View Current Guidelines
+                    </a>
+                </div>
+
+                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🏛️</div>
+                    <h3 style="margin-bottom: 1rem;">USCIS Official Website</h3>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Access official forms, filing fees, processing times, and case status updates directly from USCIS.</p>
+                    <a href="https://www.uscis.gov" target="_blank" rel="noopener noreferrer" 
+                       style="background: #059669; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
+                        Visit USCIS.gov
+                    </a>
+                </div>
+
+                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">💻</div>
+                    <h3 style="margin-bottom: 1rem;">Online Filing Portal</h3>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">File select immigration forms online through USCIS's myUSCIS portal. Available for I-485, N-400, and other eligible forms.</p>
+                    <a href="https://myuscis.uscis.gov" target="_blank" rel="noopener noreferrer" 
+                       style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
+                        File Online
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function scrollToGuides() {
+            document.getElementById('guides').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function buyGuide(id, title, price) {
+            // Show checkout modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                justify-content: center; z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; max-height: 90%; overflow-y: auto;">
+                    <h2 style="margin-bottom: 1rem;">Purchase ${title}</h2>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Complete your purchase to get instant access to this immigration guide.</p>
+                    <div style="background: #f9fafb; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <strong>Price: $${price}</strong>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email Address:</label>
+                        <input type="email" id="email" placeholder="your@email.com" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px;">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="processPayment(${id}, '${title}', ${price})" style="flex: 1; background: #059669; color: white; padding: 0.75rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Complete Purchase</button>
+                        <button onclick="closeModal()" style="flex: 1; background: #6b7280; color: white; padding: 0.75rem; border: none; border-radius: 6px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        function closeModal() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+        }
+
+        function processPayment(id, title, price) {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            // Process payment with Stripe
+            fetch('/api/create-payment-intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    guideId: id,
+                    customerEmail: email
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.clientSecret) {
+                    closeModal();
+                    alert(`Payment successful! Your guide "${title}" is ready for download. Check your email for the download link.`);
+                } else {
+                    alert('Payment failed. Please try again.');
+                }
+            })
+            .catch(err => {
+                console.error('Payment error:', err);
+                alert('Payment processing failed. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
