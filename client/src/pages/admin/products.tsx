@@ -27,8 +27,6 @@ import {
   DollarSign,
   Star,
   Globe,
-  Eye,
-  Download,
   Loader2,
 } from "lucide-react";
 import { apiRequest } from "../../lib/queryClient";
@@ -60,8 +58,6 @@ export function AdminProducts() {
   const [showModal, setShowModal] = useState(false);
   const [editingGuide, setEditingGuide] = useState<Guide | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [showFilePreview, setShowFilePreview] = useState(false);
-  const [previewGuide, setPreviewGuide] = useState<Guide | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     titleEs: "",
@@ -368,13 +364,6 @@ export function AdminProducts() {
               <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                 {guide.description}
               </p>
-
-              {guide.fileUrl && (
-                <div className="flex items-center space-x-2 mb-3 p-2 bg-gray-50 rounded-md border border-gray-200">
-                  <FileText className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">{guide.fileUrl}</span>
-                </div>
-              )}
 
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-1">
