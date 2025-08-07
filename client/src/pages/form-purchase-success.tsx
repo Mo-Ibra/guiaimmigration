@@ -68,6 +68,7 @@ export default function FormPurchaseSuccess() {
         try {
           const response = await apiRequest("GET", `/api/guides/${guideId}`);
           const guide = await response.json();
+          console.log(guide);
           setPurchasedGuide(guide);
 
           // Convert to FormDetails for compatibility
@@ -136,13 +137,13 @@ export default function FormPurchaseSuccess() {
             <p className="text-green-700 mb-4">Your Download link is ready:</p>
             {purchasedGuide && (
               <>
-                <Link href={purchasedGuide.fileUrl} target="_blank">
+                <a href={purchasedGuide.fileUrl} target="_blank">
                   English Version
-                </Link>
+                </a>
                 <hr className="my-2 border border-gray-200 w-1/4 mx-auto" />
-                <Link href={purchasedGuide.fileUrlEs} target="_blank">
+                <a href={purchasedGuide.fileUrlEs} target="_blank">
                   Spanish Version
-                </Link>
+                </a>
               </>
             )}
           </div>
