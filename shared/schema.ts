@@ -64,9 +64,8 @@ export const translationOrders = pgTable("translation_orders", {
   id: serial("id").primaryKey(),
   orderNumber: varchar("order_number", { length: 20 }).unique().notNull(),
   customerEmail: varchar("customer_email", { length: 255 }).notNull(),
-  customerPhone: varchar("customer_phone", { length: 50 }),
-  originalFileName: varchar("original_file_name", { length: 255 }).notNull(),
-  fileType: varchar("file_type", { length: 50 }).notNull(),
+  customerPhone: varchar("customer_phone", { length: 50 }).notNull(),
+  fileUrl: text("file_url").notNull(),
   pageCount: integer("page_count").notNull(),
   deliveryType: varchar("delivery_type", { length: 20 }).notNull(), // 'standard' or 'rush'
   totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(),

@@ -1,23 +1,18 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import { Express, Request, Response, NextFunction } from "express";
+import { Express, Request, Response } from "express";
 
-import { z } from "zod";
 import { Server } from "http";
-import { storage } from "./storage";
-import { insertContactMessageSchema, insertTestimonialSchema, insertTranslationOrderSchema, insertTranslationPricingSchema, insertUserSchema } from "@shared/schema";
-import Stripe from "stripe";
-import { AuthenticatedRequest } from "./types";
 import { debugAdminRoute, debugRoute, sessionDebugRoute } from './routes/debug.route';
 import { authLoginRoute, authLogoutRoute, authMeRoute } from './routes/auth.route';
 import { getFeaturedGuideRoute, getGuideByIdRoute, getGuidesBySkillLevelRoute, getGuidesRoute } from './routes/guides.route';
 import { getUscisDataRoute } from './routes/uscis.route';
-import { contactRoute } from './routes/contact.route';
+import { createContactRoute } from './routes/contact.route';
 import { AIChatRoute } from './routes/ai-chat.route';
 import { createTestimonialRoute } from './routes/testimonials.route';
 import { createTranslationPaymentRoute } from './routes/translation-payment.route';
 import { createCreateGuideFormPaymentRoute, createGuidePaymentRoute } from './routes/guide-payment.route';
-import { createTranslationOrderRoute, getTranslationOrderRoute, updateTranslationOrderPaymentStatusRoute } from './routes/translation-orders.route';
+import { createTranslationOrderRoute, getTranslationOrderRoute, updateTranslationOrderPaymentStatusRoute, uploadTranslationRoute } from './routes/translation-orders.route';
 import { deleteAdminTranslationOrderRoute, getAdminTranslationOrdersRoute, updateAdminTranslationOrderFilesRoute, updateAdminTranslationOrderStatusRoute } from './routes/admin/translation-orders.route';
 import { testDataBaseRoute } from './routes/test-db.route';
 import { createAdminGuideRoute, deleteAdminGuideRoute, getAdminGuidesRoute, updateAdminGuideRoute } from './routes/admin/guides.route';
@@ -26,6 +21,7 @@ import { createAdminUserRoute, deleteAdminUserRoute, getAdminUsersRoute, updateA
 import { getAdminDashboardStatsRoute } from './routes/admin/dashboard-stats.route';
 import { deleteAdminContactRoute, getAdminContactsRoute } from './routes/admin/contacts.route';
 import { createAdminTranslationPriceRoute, deleteAdminTranslationPriceRoute, getAdminActiveTranslationsPriceRoute, getAdminTranslationsPriceRoute, updateAdminTranslationPriceRoute } from './routes/admin/translation-price.route';
+import { createTranslationRoute } from './routes/translation.route';
 // Dynamic import for nodemailer to avoid ES module issues
 
 // Validate Stripe configuration
@@ -33,10 +29,6 @@ if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test
   console.warn('⚠️  Stripe secret key not configured. Payment features will be disabled.');
   console.warn('   Please set STRIPE_SECRET_KEY in your .env file with a valid Stripe secret key.');
 }
-
-const stripe = process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'sk_test_your_stripe_secret_key_here'
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)
-  : null;
 
 // Initialize email transporter
 let emailTransporter: any = null;
@@ -123,14 +115,6 @@ async function sendDownloadEmail(customerEmail: string, downloadUrl: string, gui
   }
 }
 
-// Authentication middleware
-function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  if (req.session && req.session.isAuthenticated) {
-    return next();
-  }
-  return res.status(401).json({ error: "Authentication required" });
-}
-
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for Render
   app.get("/api/health", (req: Request, res: Response) => {
@@ -171,13 +155,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/uscis-data", getUscisDataRoute);
 
   // Submit contact message
-  app.post("/api/contact", contactRoute);
+  app.post("/api/contact", createContactRoute);
 
   // AI Assistant endpoint using Perplexity API
   app.post("/api/ai-chat", AIChatRoute);
 
   // Submit testimonial
   app.post("/api/testimonials", createTestimonialRoute);
+
+  // Submit Translation
+  app.post("/api/create-translation", createTranslationRoute);
 
   // Stripe payment intent for translation orders
   app.post("/api/create-translation-payment-intent", createTranslationPaymentRoute);
@@ -187,6 +174,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Stripe payment intent for guide purchases
   app.post("/api/create-payment-intent", createGuidePaymentRoute);
+
+  app.post("/api/upload-translation", uploadTranslationRoute);
 
   // Translation Order Routes - This endpoint is now mainly for legacy support
   // Orders are primarily created during file upload

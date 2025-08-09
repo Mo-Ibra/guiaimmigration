@@ -1,5 +1,5 @@
 {
-  "id": "e2644cd9-be42-40a7-85b6-325c41c0a0aa",
+  "id": "cdc3ecaf-35c4-43ae-893b-e158107cbddd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -255,17 +255,11 @@
           "name": "customer_phone",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
-        },
-        "original_file_name": {
-          "name": "original_file_name",
-          "type": "varchar(255)",
-          "primaryKey": false,
           "notNull": true
         },
-        "file_type": {
-          "name": "file_type",
-          "type": "varchar(50)",
+        "file_url": {
+          "name": "file_url",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },

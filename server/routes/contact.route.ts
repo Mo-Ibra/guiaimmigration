@@ -3,7 +3,7 @@ import { storage } from "../storage";
 import { Request, Response } from "express";
 import z from "zod";
 
-export const contactRoute = async (req: Request, res: Response) => {
+export const createContactRoute = async (req: Request, res: Response) => {
   try {
     console.log("Contact form submission received:", req.body);
     const validatedData = insertContactMessageSchema.parse(req.body);
