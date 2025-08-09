@@ -9,11 +9,16 @@ export const getAdminDashboardStatsRoute = async (
   try {
     const contacts = await storage.getAllContactMessages();
     const orders = await storage.getAllTranslationOrders();
-    // ... (rest of the code remains the same)
+
     const totalRevenue = orders.reduce(
       (sum, order) => sum + parseFloat(order.totalPrice),
       0
     );
+
+    const paidRevenue = orders.filter(
+      (order) => order.status === "paid" || order.status === "delivered")
+      .reduce((sum, order) => sum + parseFloat(order.totalPrice), 0);
+
     const pendingOrders = orders.filter(
       (order) => order.status === "pending"
     ).length;
@@ -22,6 +27,7 @@ export const getAdminDashboardStatsRoute = async (
       totalContacts: contacts.length,
       totalOrders: orders.length,
       totalRevenue: totalRevenue.toFixed(2),
+      paidRevenue: paidRevenue.toFixed(2),
       pendingOrders,
       recentContacts: contacts.slice(-5),
       recentOrders: orders.slice(-5),

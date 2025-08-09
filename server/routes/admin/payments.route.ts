@@ -3,7 +3,6 @@ import { storage } from "../../storage";
 import { AuthenticatedRequest } from "server/types";
 
 
-
 /**
  * Route handler to fetch all translation payment records.
  *
@@ -27,7 +26,7 @@ export const getAdminTranslationPaymentsRoute = async (
       amount: parseFloat(order.totalPrice),
       currency: "usd", // Assuming USD for all payments
       status:
-        order.status === "paid" || order.status === "succeeded"
+        order.status === "paid" || order.status === "succeeded" || order.status === "delivered"
           ? "succeeded"
           : order.status || "pending",
       customerEmail: order.customerEmail,
@@ -37,8 +36,8 @@ export const getAdminTranslationPaymentsRoute = async (
       createdAt: order.createdAt,
       metadata: {
         orderNumber: order.orderNumber,
-        originalFileName: order.originalFileName,
-        deliveryType: order.deliveryType,
+        // originalFileName: order.originalFileName,
+        // deliveryType: order.deliveryType,
         pageCount: order.pageCount,
       },
     }));
@@ -72,7 +71,7 @@ export const getAdminPaymentStatusRoute = async (
       amount: parseFloat(order.totalPrice),
       currency: "usd", // Assuming USD for all payments
       status:
-        order.status === "paid" || order.status === "succeeded"
+        order.status === "paid" || order.status === "succeeded" || order.status === "delivered"
           ? "succeeded"
           : order.status || "pending",
       customerEmail: order.customerEmail,
@@ -82,8 +81,8 @@ export const getAdminPaymentStatusRoute = async (
       createdAt: order.createdAt,
       metadata: {
         orderNumber: order.orderNumber,
-        originalFileName: order.originalFileName,
-        deliveryType: order.deliveryType,
+        // originalFileName: order.originalFileName,
+        // deliveryType: order.deliveryType,
         pageCount: order.pageCount,
       },
     }));
