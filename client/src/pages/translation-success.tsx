@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
+import { apiRequest } from "../lib/queryClient";
 
 export default function TranslationSuccess() {
   const [, setLocation] = useLocation();
@@ -18,60 +19,140 @@ export default function TranslationSuccess() {
     "loading" | "success" | "failed" | "error"
   >("loading");
   const [paymentDetails, setPaymentDetails] = useState<any>(null);
+  const [orderUpdateStatus, setOrderUpdateStatus] = useState<
+    "updating" | "success" | "failed"
+  >("updating");
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentIntent = urlParams.get("payment_intent");
-    const redirectStatus = urlParams.get("redirect_status");
+    const updateOrderStatus = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentIntent = urlParams.get("payment_intent");
+      const redirectStatus = urlParams.get("redirect_status");
 
-    if (!paymentIntent) {
-      setPaymentStatus("success");
-      return;
-    }
+      console.log("🔍 URL Parameters:", { paymentIntent, redirectStatus });
 
-    if (redirectStatus === "failed") {
-      setPaymentStatus("failed");
+      // Handle case when no URL parameters (direct access to success page)
+      if (!paymentIntent && !redirectStatus) {
+        console.log("✅ Direct access to success page - assuming success");
+        setPaymentStatus("success");
+        setOrderUpdateStatus("success");
+        return;
+      }
 
-      toast({
-        title: "Payment Failed",
-        description: "Your payment was not successful. Please try again.",
-        variant: "destructive",
-      });
+      // Handle payment failure cases
+      if (redirectStatus === "failed" || (!paymentIntent && redirectStatus)) {
+        console.log("❌ Payment failed - redirectStatus:", redirectStatus);
+        setPaymentStatus("failed");
+        toast({
+          title: "Payment Failed",
+          description: "Your payment was not successful. Please try again.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          setLocation("/translation-checkout");
+        }, 10000);
+        return;
+      }
 
-      setTimeout(() => {
-        setLocation("/translation-checkout");
-      }, 10000);
-      return;
-    }
+      // Handle payment success
+      if (redirectStatus === "succeeded" && paymentIntent) {
+        console.log("✅ Payment succeeded via Stripe redirect");
+        setPaymentStatus("success");
+        setPaymentDetails({ paymentIntent });
 
-    if (redirectStatus === "succeeded" && paymentIntent) {
-      setPaymentStatus("success");
-      setPaymentDetails({ paymentIntent });
+        // Now try to update the order status
+        try {
+          const storedOrderDetails = sessionStorage.getItem(
+            "translationOrderDetails"
+          );
 
-      // Clean up URL
-      const cleanUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-    }
+          if (storedOrderDetails) {
+            const orderDetails = JSON.parse(storedOrderDetails);
+
+            if (orderDetails.orderNumber) {
+              console.log(
+                `🔄 Updating order ${orderDetails.orderNumber} payment status to 'paid'`
+              );
+
+              const updateResponse = await apiRequest(
+                "PATCH",
+                `/api/translation-orders/${orderDetails.orderNumber}/payment-status`,
+                {
+                  paymentIntentId: paymentIntent,
+                }
+              );
+
+              if (!updateResponse.ok) {
+                throw new Error(
+                  `Failed to update order: ${updateResponse.status}`
+                );
+              }
+
+              const updatedOrder = await updateResponse.json();
+              console.log(
+                "✅ Order payment status updated successfully:",
+                updatedOrder
+              );
+
+              setOrderUpdateStatus("success");
+
+              toast({
+                title: "Order Updated",
+                description: `Order ${orderDetails.orderNumber} status updated to paid!`,
+              });
+
+              // Clean up sessionStorage after successful update
+              sessionStorage.removeItem("translationFile");
+              sessionStorage.removeItem("translationOrderDetails");
+            } else {
+              // No order number found, but payment succeeded
+              console.log("⚠️ No order number found, but payment succeeded");
+              setOrderUpdateStatus("success");
+              sessionStorage.removeItem("translationFile");
+              sessionStorage.removeItem("translationOrderDetails");
+            }
+          } else {
+            // No stored order details, but payment succeeded
+            console.log(
+              "⚠️ No stored order details found, but payment succeeded"
+            );
+            setOrderUpdateStatus("success");
+          }
+        } catch (error) {
+          console.error("❌ Failed to update order payment status:", error);
+          setOrderUpdateStatus("failed");
+
+          toast({
+            title: "Order Update Failed",
+            description:
+              "Payment succeeded but order status couldn't be updated. Contact support.",
+            variant: "destructive",
+          });
+        }
+
+        // Clean up URL
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      } else {
+        // Payment not succeeded or missing parameters
+        console.log("❌ Payment not successful or missing parameters:", {
+          paymentIntent,
+          redirectStatus,
+        });
+        setPaymentStatus("failed");
+        toast({
+          title: "Payment Failed",
+          description: "Payment was not successful. Please try again.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          setLocation("/translation-checkout");
+        }, 5000);
+      }
+    };
+
+    updateOrderStatus();
   }, [toast, setLocation]);
-
-  // 🔄 Loading State
-  if (paymentStatus === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-2xl mx-auto px-4 py-8">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Verifying Payment
-            </h2>
-            <p className="text-gray-600">
-              Please wait while we confirm your payment...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // ❌ Failed State
   if (paymentStatus === "failed") {
@@ -135,7 +216,7 @@ export default function TranslationSuccess() {
     );
   }
 
-  // ✅ Success State - الصفحة الأصلية مع تحسينات
+  // ✅ Success State مع إشعار حالة تحديث الطلب
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="max-w-2xl mx-auto px-4 py-8">
@@ -153,7 +234,23 @@ export default function TranslationSuccess() {
             successfully.
           </p>
 
-          {/* إضافة تفاصيل الدفع إذا كانت متوفرة */}
+          {/* Order update status indicator */}
+          {orderUpdateStatus === "failed" && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <AlertCircle className="h-5 w-5 text-yellow-600" />
+                <span className="font-medium text-yellow-900">
+                  Order Status Update Issue
+                </span>
+              </div>
+              <p className="text-sm text-yellow-700">
+                Your payment was successful, but we couldn't automatically
+                update your order status. Don't worry - our team will process
+                your order manually. You may contact support for confirmation.
+              </p>
+            </div>
+          )}
+
           {paymentDetails && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="text-sm text-gray-600">

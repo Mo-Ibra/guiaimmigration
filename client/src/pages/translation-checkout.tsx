@@ -35,8 +35,6 @@ const CheckoutForm = ({ orderDetails }: { orderDetails: OrderDetails }) => {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
-  // File is already uploaded and order created before reaching checkout
-  // No need to upload file again
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +42,7 @@ const CheckoutForm = ({ orderDetails }: { orderDetails: OrderDetails }) => {
     if (!stripe || !elements) {
       toast({
         title: "Payment System Error",
-        description:
-          "Payment system is not available. Please refresh the page.",
+        description: "Payment system is not available. Please refresh the page.",
         variant: "destructive",
       });
       return;
@@ -54,15 +51,14 @@ const CheckoutForm = ({ orderDetails }: { orderDetails: OrderDetails }) => {
     setIsProcessing(true);
 
     try {
-      const { error, paymentIntent } = await stripe.confirmPayment({
+      const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/translation-success`,
         },
-        redirect: "if_required",
       });
 
-      // ✅ Make sure there's no errors
+      // Only handle errors - success will be handled by the redirect
       if (error) {
         console.error("💳 Payment failed:", error);
         toast({
@@ -70,126 +66,21 @@ const CheckoutForm = ({ orderDetails }: { orderDetails: OrderDetails }) => {
           description: error.message || "Payment could not be processed",
           variant: "destructive",
         });
-        return; // ❌
+        setIsProcessing(false);
+        return;
       }
 
-      if (!paymentIntent || paymentIntent.status !== "succeeded") {
-        console.error("💳 Payment not successful:", paymentIntent?.status);
-        toast({
-          title: "Payment Not Completed",
-          description: "Payment was not successful. Please try again.",
-          variant: "destructive",
-        });
-        return; // ❌
-      }
-
-      // ✅ Now only if success try to update the order status
-      console.log("💳 Payment successful, updating order status to paid");
-      console.log("📋 Order details:", orderDetails);
-      console.log("💰 Payment Intent ID:", paymentIntent.id);
-
-      try {
-        console.log(orderDetails.orderNumber);
-        if (orderDetails.orderNumber) {
-          console.log(
-            `🔄 Updating order ${orderDetails.orderNumber} payment status to 'paid'`
-          );
-
-          const updateResponse = await apiRequest(
-            "PATCH",
-            `/api/translation-orders/${orderDetails.orderNumber}/payment-status`,
-            {
-              paymentIntentId: paymentIntent.id,
-            }
-          );
-
-          if (!updateResponse.ok) {
-            throw new Error(
-              `Failed to update order: ${updateResponse.status} ${updateResponse.statusText}`
-            );
-          }
-
-          const updatedOrder = await updateResponse.json();
-          console.log(
-            "✅ Order payment status updated successfully:",
-            updatedOrder
-          );
-
-          // ✅ Everything has been success.
-          toast({
-            title: "Payment Successful",
-            description: `Order ${orderDetails.orderNumber} payment processed successfully!`,
-          });
-
-          // Clean up sessionStorage
-          sessionStorage.removeItem("translationFile");
-          sessionStorage.removeItem("translationOrderDetails");
-
-          setLocation("/translation-success");
-        } else {
-          console.warn(
-            "⚠️ No order number found, creating new order as fallback"
-          );
-
-          const orderData = {
-            ...orderDetails,
-            totalPrice: orderDetails.totalPrice.toString(),
-            status: "paid",
-          };
-
-          const orderResponse = await apiRequest(
-            "POST",
-            "/api/translation-orders",
-            orderData
-          );
-
-          if (!orderResponse.ok) {
-            throw new Error(
-              `Failed to create order: ${orderResponse.status} ${orderResponse.statusText}`
-            );
-          }
-
-          const newOrder = await orderResponse.json();
-          console.log("✅ New order created:", newOrder);
-
-          toast({
-            title: "Payment Successful",
-            description:
-              "Your translation order has been created and payment processed!",
-          });
-
-          // Clean up sessionStorage
-          sessionStorage.removeItem("translationFile");
-          sessionStorage.removeItem("translationOrderDetails");
-
-          setLocation("/translation-success");
-        }
-      } catch (updateError) {
-        console.error("❌ Failed to update order payment status:", updateError);
-
-        let errorMessage = "Unknown error occurred";
-        if (updateError instanceof Error) {
-          errorMessage = updateError.message;
-        }
-
-        toast({
-          title: "Order Update Failed",
-          description: `Payment was successful, but we couldn't update your order: ${errorMessage}. Please contact support immediately with payment confirmation.`,
-          variant: "destructive",
-        });
-
-        // You can add another page for payment issues
-        // setLocation('/payment-issue');
-      }
+      // If we reach here without error, payment is being processed
+      // The success page will handle the rest
+      console.log("💳 Payment processing initiated, redirecting to success page...");
+      
     } catch (error) {
       console.error("💳 General payment error:", error);
       toast({
         title: "Payment Error",
-        description:
-          "Something went wrong with the payment process. Please try again.",
+        description: "Something went wrong with the payment process. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsProcessing(false);
     }
   };
@@ -265,9 +156,7 @@ const CheckoutForm = ({ orderDetails }: { orderDetails: OrderDetails }) => {
 export default function TranslationCheckout() {
   const [clientSecret, setClientSecret] = useState("");
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
-  const [paymentSetupError, setPaymentSetupError] = useState<string | null>(
-    null
-  );
+  const [paymentSetupError, setPaymentSetupError] = useState<string | null>(null);
   const { toast } = useToast();
 
   if (!stripePromise) {
@@ -290,9 +179,7 @@ export default function TranslationCheckout() {
   }
 
   useEffect(() => {
-    const storedOrderDetails = sessionStorage.getItem(
-      "translationOrderDetails"
-    );
+    const storedOrderDetails = sessionStorage.getItem("translationOrderDetails");
     if (!storedOrderDetails) {
       toast({
         title: "No Order Found",
@@ -306,9 +193,11 @@ export default function TranslationCheckout() {
     const details: OrderDetails = JSON.parse(storedOrderDetails);
     setOrderDetails(details);
 
+    // Create payment intent with order details
     apiRequest("POST", "/api/create-translation-payment-intent", {
       amount: details.totalPrice,
       customerEmail: details.customerEmail,
+      orderNumber: details.orderNumber, // Include order number for tracking
     })
       .then(async (res) => {
         if (!res.ok) {
@@ -321,14 +210,14 @@ export default function TranslationCheckout() {
           throw new Error("No client secret received from server");
         }
         setClientSecret(data.clientSecret);
+        console.log("💰 Payment intent created successfully");
       })
       .catch((error) => {
         console.error("Payment intent creation failed:", error);
         setPaymentSetupError(error.message || "Failed to setup payment");
         toast({
           title: "Payment Setup Failed",
-          description:
-            "Unable to setup payment. Please try again or contact support.",
+          description: "Unable to setup payment. Please try again or contact support.",
           variant: "destructive",
         });
       });
