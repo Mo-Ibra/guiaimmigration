@@ -1,5 +1,12 @@
-import { Link } from "wouter";
-import { CheckCircle, FileText, Download, ArrowRight, XCircle, AlertCircle } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import {
+  CheckCircle,
+  FileText,
+  Download,
+  ArrowRight,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useEffect, useState } from "react";
 import { apiRequest } from "../lib/queryClient";
@@ -50,13 +57,21 @@ const formData: Record<string, FormDetails> = {
   },
 };
 
-type PaymentStatus = 'succeeded' | 'failed' | 'processing' | 'requires_action' | null;
+type PaymentStatus =
+  | "succeeded"
+  | "failed"
+  | "processing"
+  | "requires_action"
+  | null;
 
 export default function FormPurchaseSuccess() {
   const [purchasedForm, setPurchasedForm] = useState<FormDetails | null>(null);
   const [purchasedGuide, setPurchasedGuide] = useState<Guide | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(null);
   const [loading, setLoading] = useState(true);
+  const [countdown, setCountdown] = useState(5);
+
+  const [, setLocation] = useLocation();
 
   const { toast } = useToast();
 
@@ -66,12 +81,12 @@ export default function FormPurchaseSuccess() {
       const formId = urlParams.get("form");
       const guideId = urlParams.get("guideId");
       const redirectStatus = urlParams.get("redirect_status") as PaymentStatus;
-      
+
       // Set payment status from URL
       setPaymentStatus(redirectStatus);
 
       // Only load purchase data if payment was successful
-      if (redirectStatus === 'succeeded') {
+      if (redirectStatus === "succeeded") {
         // Try to load from database first (new approach)
         if (guideId) {
           try {
@@ -102,12 +117,29 @@ export default function FormPurchaseSuccess() {
           setPurchasedForm(formData[formId]);
         }
       }
-      
+
       setLoading(false);
     };
 
     loadPurchaseData();
   }, [toast]);
+
+  // Auto-redirect effect for failed payments
+  useEffect(() => {
+    if (paymentStatus === "failed") {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setLocation("/forms");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [paymentStatus, setLocation]);
 
   if (loading) {
     return (
@@ -121,7 +153,7 @@ export default function FormPurchaseSuccess() {
   }
 
   // Payment Failed View
-  if (paymentStatus === 'failed') {
+  if (paymentStatus === "failed") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-2xl mx-auto px-4 py-8">
@@ -135,7 +167,8 @@ export default function FormPurchaseSuccess() {
             </h1>
 
             <p className="text-lg text-gray-600 mb-8">
-              Unfortunately, your payment could not be processed. Please try again or contact support.
+              Unfortunately, your payment could not be processed. Please try
+              again or contact support.
             </p>
 
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
@@ -145,6 +178,15 @@ export default function FormPurchaseSuccess() {
                 <p>• Incorrect card information entered</p>
                 <p>• Payment method not supported</p>
               </div>
+            </div>
+
+            {/* Countdown notification */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <p className="text-blue-700 text-sm">
+                Redirecting to forms page in{" "}
+                <span className="font-bold text-blue-900">{countdown}</span>{" "}
+                seconds...
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -163,9 +205,7 @@ export default function FormPurchaseSuccess() {
             </div>
 
             <div className="mt-8 text-sm text-gray-500">
-              <p>
-                Need help? Contact us at support@guiaimmigration.com
-              </p>
+              <p>Need help? Contact us at support@guiaimmigration.com</p>
             </div>
           </div>
         </div>
@@ -174,7 +214,7 @@ export default function FormPurchaseSuccess() {
   }
 
   // Payment Processing or Requires Action View
-  if (paymentStatus === 'processing' || paymentStatus === 'requires_action') {
+  if (paymentStatus === "processing" || paymentStatus === "requires_action") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-2xl mx-auto px-4 py-8">
@@ -184,13 +224,16 @@ export default function FormPurchaseSuccess() {
             </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Payment {paymentStatus === 'processing' ? 'Processing' : 'Action Required'}
+              Payment{" "}
+              {paymentStatus === "processing"
+                ? "Processing"
+                : "Action Required"}
             </h1>
 
             <p className="text-lg text-gray-600 mb-8">
-              {paymentStatus === 'processing' 
-                ? 'Your payment is being processed. Please wait while we confirm your transaction.'
-                : 'Additional action is required to complete your payment. Please check your email or return to the payment page.'}
+              {paymentStatus === "processing"
+                ? "Your payment is being processed. Please wait while we confirm your transaction."
+                : "Additional action is required to complete your payment. Please check your email or return to the payment page."}
             </p>
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
@@ -198,15 +241,15 @@ export default function FormPurchaseSuccess() {
                 <p>• Do not close this page or refresh</p>
                 <p>• You will receive an email confirmation once processed</p>
                 <p>• Processing may take a few minutes</p>
-                {paymentStatus === 'requires_action' && (
+                {paymentStatus === "requires_action" && (
                   <p>• Check your email for further instructions</p>
                 )}
               </div>
             </div>
 
             <div className="space-y-4">
-              <Button 
-                onClick={() => window.location.reload()} 
+              <Button
+                onClick={() => window.location.reload()}
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
                 Refresh Status
@@ -220,9 +263,7 @@ export default function FormPurchaseSuccess() {
             </div>
 
             <div className="mt-8 text-sm text-gray-500">
-              <p>
-                Questions? Contact us at support@guiaimmigration.com
-              </p>
+              <p>Questions? Contact us at support@guiaimmigration.com</p>
             </div>
           </div>
         </div>
@@ -276,17 +317,17 @@ export default function FormPurchaseSuccess() {
             <p className="text-green-700 mb-4">Your Download link is ready:</p>
             {purchasedGuide && (
               <>
-                <a 
-                  href={purchasedGuide.fileUrl} 
-                  target="_blank" 
+                <a
+                  href={purchasedGuide.fileUrl}
+                  target="_blank"
                   className="text-blue-600 hover:text-blue-800 underline block mb-2"
                   rel="noopener noreferrer"
                 >
                   English Version
                 </a>
                 <hr className="my-2 border border-gray-200 w-1/4 mx-auto" />
-                <a 
-                  href={purchasedGuide.fileUrlEs} 
+                <a
+                  href={purchasedGuide.fileUrlEs}
                   target="_blank"
                   className="text-blue-600 hover:text-blue-800 underline block mt-2"
                   rel="noopener noreferrer"

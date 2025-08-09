@@ -161,8 +161,7 @@ export function AdminOrders() {
       [
         "Order Number",
         "Customer Email",
-        "File Name",
-        "File Type",
+        "File Url",
         "Pages",
         "Delivery",
         "Price",
@@ -230,7 +229,7 @@ export function AdminOrders() {
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="in_progress">Paid</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
                 <SelectItem value="delivered">Delivered</SelectItem>
               </SelectContent>
             </Select>
@@ -515,7 +514,7 @@ export function AdminOrders() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in_progress">Paid</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
                     <SelectItem value="delivered">Delivered</SelectItem>
                   </SelectContent>
                 </Select>
