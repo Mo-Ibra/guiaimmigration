@@ -18,6 +18,7 @@ interface DashboardStats {
   totalContacts: number;
   totalOrders: number;
   totalRevenue: number;
+  paidRevenue: number;
   pendingOrders: number;
   recentContacts: any[];
   recentOrders: any[];
@@ -96,7 +97,7 @@ export function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats?.totalRevenue || 0}</div>
+            <div className="text-2xl font-bold">${stats?.paidRevenue || 0}</div>
             <p className="text-xs text-muted-foreground">
               +15% from last month
             </p>
