@@ -2,68 +2,74 @@ import { Request, Response } from "express";
 import { storage } from "../storage";
 
 export const uploadTranslationRoute = async (req: Request, res: Response) => {
-  
-    console.log("UPLOAD TRANSLATION ROUTE!!!!");
+  console.log("UPLOAD TRANSLATION ROUTE!!!!");
 
-    try {
-      console.log("Translation request received");
-      console.log("Request body:", req.body);
+  try {
+    console.log("Translation request received");
+    console.log("Request body:", req.body);
 
-      const { customerEmail, customerPhone, fileUrl, pageCount, deliveryType, totalPrice } = req.body;
+    const {
+      customerEmail,
+      customerPhone,
+      fileUrl,
+      pageCount,
+      deliveryType,
+      totalPrice,
+    } = req.body;
 
-      if (!customerEmail) {
-        console.log("No customer email provided");
-        return res.status(400).json({ message: "Customer email is required" });
-      }
-
-      if (!fileUrl || typeof fileUrl !== "string") {
-        console.log("No file URL provided");
-        return res.status(400).json({ message: "File URL is required" });
-      }
-
-      // Generate unique order number
-      const orderNumber =
-        "TR-" +
-        Date.now().toString(36).toUpperCase() +
-        Math.random().toString(36).substr(2, 4).toUpperCase();
-
-      // Create order data (store fileUrl instead of file content)
-      const orderData = {
-        orderNumber,
-        customerEmail,
-        customerPhone,
-        fileUrl,
-        pageCount: pageCount || 0,
-        deliveryType: deliveryType || "standard",
-        totalPrice: totalPrice?.toString() || "25.00",
-        status: "pending",
-        originalFilePath: null,
-        translatedFilePath: null,
-        originalFileContent: null,
-        translatedFileContent: null,
-        adminNotes: null,
-        paymentIntentId: null,
-      };
-
-      console.log(
-        "Creating translation order with file URL in database",
-        orderData
-      );
-
-      const order = await storage.createTranslationOrder(orderData);
-
-      res.json({
-        success: true,
-        orderNumber: order.orderNumber,
-        fileUrl,
-        message: "File link received and order created successfully",
-      });
-    } catch (error: any) {
-      console.error("Error processing file URL:", error);
-      res
-        .status(500)
-        .json({ message: "Error processing file URL: " + error.message });
+    if (!customerEmail) {
+      console.log("No customer email provided");
+      return res.status(400).json({ message: "Customer email is required" });
     }
+
+    if (!fileUrl || typeof fileUrl !== "string") {
+      console.log("No file URL provided");
+      return res.status(400).json({ message: "File URL is required" });
+    }
+
+    // Generate unique order number
+    const orderNumber =
+      "TR-" +
+      Date.now().toString(36).toUpperCase() +
+      Math.random().toString(36).substr(2, 4).toUpperCase();
+
+    // Create order data (store fileUrl instead of file content)
+    const orderData = {
+      orderNumber,
+      customerEmail,
+      customerPhone,
+      fileUrl,
+      pageCount: pageCount || 0,
+      deliveryType: deliveryType || "standard",
+      totalPrice: totalPrice?.toString() || "25.00",
+      status: "pending",
+      originalFilePath: null,
+      translatedFilePath: null,
+      originalFileContent: null,
+      translatedFileContent: null,
+      adminNotes: null,
+      paymentIntentId: null,
+    };
+
+    console.log(
+      "Creating translation order with file URL in database",
+      orderData
+    );
+
+    const order = await storage.createTranslationOrder(orderData);
+
+    res.json({
+      success: true,
+      orderNumber: order.orderNumber,
+      fileUrl,
+      message: "File link received and order created successfully",
+    });
+  } catch (error: any) {
+    console.error("Error processing file URL:", error);
+    res
+      .status(500)
+      .json({ message: "Error processing file URL: " + error.message });
+  }
 };
 
 export const createTranslationOrderRoute = () => {
@@ -82,23 +88,15 @@ export const createTranslationOrderRoute = () => {
         ...req.body,
         orderNumber,
         status: req.body.status || "pending",
-        originalFileContent: req.body.originalFileContent || null,
-        translatedFileContent: req.body.translatedFileContent || null,
       };
 
       console.log("Final order data to be saved:", {
         ...orderData,
-        originalFileContent: orderData.originalFileContent
-          ? "[BASE64_CONTENT]"
-          : null,
       });
 
       const order = await storage.createTranslationOrder(orderData);
       console.log("Order created successfully:", {
         ...order,
-        originalFileContent: order.originalFileContent
-          ? "[BASE64_CONTENT]"
-          : null,
       });
 
       res.json(order);
@@ -148,9 +146,6 @@ export const updateTranslationOrderPaymentStatusRoute = async (
 
     console.log(`📋 Found existing order:`, {
       ...existingOrder,
-      originalFileContent: existingOrder.originalFileContent
-        ? "[BASE64_CONTENT]"
-        : null,
     });
 
     // Update order status to 'paid' and store payment intent ID
@@ -162,13 +157,11 @@ export const updateTranslationOrderPaymentStatusRoute = async (
       }`,
       paymentIntentId
     );
+
     console.log(
       `✅ Order ${orderNumber} payment status updated successfully:`,
       {
         ...updatedOrder,
-        originalFileContent: updatedOrder.originalFileContent
-          ? "[BASE64_CONTENT]"
-          : null,
       }
     );
 

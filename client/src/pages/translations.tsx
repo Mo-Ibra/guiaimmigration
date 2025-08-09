@@ -129,8 +129,6 @@ export default function Translations() {
       console.log("creating order:", payload);
 
       try {
-        console.log("TRY");
-
         const response = await fetch("/api/create-translation", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

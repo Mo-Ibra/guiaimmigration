@@ -28,6 +28,7 @@ export const updateAdminTranslationOrderStatusRoute = async (
 
     // First check if order exists
     const existingOrder = await storage.getTranslationOrder(orderNumber);
+
     if (!existingOrder) {
       console.log(`❌ Order ${orderNumber} not found`);
       return res.status(404).json({ message: "Order not found" });
@@ -38,7 +39,7 @@ export const updateAdminTranslationOrderStatusRoute = async (
     const updatedOrder = await storage.updateTranslationOrderStatus(
       orderNumber,
       status,
-      adminNotes
+      adminNotes,
     );
     console.log(
       `✅ Order ${orderNumber} status updated successfully:`,
