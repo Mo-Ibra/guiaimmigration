@@ -121,8 +121,6 @@ export function AdminPayments() {
     switch (status) {
       case 'succeeded': return 'bg-green-100 text-green-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      case 'canceled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -263,8 +261,6 @@ export function AdminPayments() {
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="succeeded">Succeeded</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-                <SelectItem value="canceled">Canceled</SelectItem>
               </SelectContent>
             </Select>
             <Select value={serviceFilter} onValueChange={setServiceFilter}>
