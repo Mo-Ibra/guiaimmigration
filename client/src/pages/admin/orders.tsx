@@ -25,6 +25,14 @@ import {
   FileText,
   Calendar,
   DollarSign,
+  StickyNote,
+  Copy,
+  Check,
+  LinkIcon,
+  Truck,
+  Phone,
+  Mail,
+  X,
 } from "lucide-react";
 import { apiRequest } from "../../lib/queryClient";
 
@@ -84,6 +92,18 @@ export function AdminOrders() {
   const [editingOrder, setEditingOrder] = useState<TranslationOrder | null>(
     null
   );
+
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -288,7 +308,10 @@ export function AdminOrders() {
                     </td>
                     <td className="p-3">
                       <Badge className={getStatusColor(order.status)}>
-                        {order.status.replace("_", " ").charAt(0).toUpperCase() + String(order.status).slice(1)}
+                        {order.status
+                          .replace("_", " ")
+                          .charAt(0)
+                          .toUpperCase() + String(order.status).slice(1)}
                       </Badge>
                     </td>
                     <td className="p-3">
@@ -354,125 +377,228 @@ export function AdminOrders() {
 
       {/* Order Detail Modal */}
       {showModal && selectedOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold">Order Details</h3>
-              <Button variant="outline" onClick={() => setShowModal(false)}>
-                ×
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Order Number
-                  </label>
-                  <p className="text-gray-900 font-medium my-2">
-                    {selectedOrder.orderNumber}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Status
-                  </label>
-                  <Badge className={`${getStatusColor(selectedOrder.status)} block w-fit my-2`}>
-                    {selectedOrder.status.replace("_", " ").charAt(0).toUpperCase() + String(selectedOrder.status).slice(1)}
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Customer Email
-                  </label>
-                  <p className="text-gray-900">{selectedOrder.customerEmail}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Phone
-                  </label>
-                  <p className="text-gray-900">
-                    {selectedOrder.customerPhone || "N/A"}
-                  </p>
-                </div>
-              </div>
-
-              {/* <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    File Url
-                  </label>
-                  <p className="text-gray-900">{selectedOrder.fileUrl}</p>
-                </div>
-              </div> */}
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Pages
-                  </label>
-                  <p className="text-gray-900">{selectedOrder.pageCount}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Delivery
-                  </label>
-                  <p className="text-gray-900">{selectedOrder.deliveryType}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-grey-600">
-                    Total Price
-                  </label>
-                  <p className="text-gray-900 font-medium">
-                    ${selectedOrder.totalPrice}
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Created
-                  </label>
-                  <p className="text-gray-900">
-                    {new Date(selectedOrder.createdAt).toLocaleString()}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Updated
-                  </label>
-                  <p className="text-gray-900">
-                    {new Date(selectedOrder.updatedAt).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-
-              {selectedOrder.adminNotes && (
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Admin Notes
-                  </label>
-                  <div className="bg-gray-50 p-3 rounded-lg mt-1">
-                    <p className="text-gray-900 whitespace-pre-wrap">
-                      {selectedOrder.adminNotes}
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      Order Details
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      #{selectedOrder.orderNumber}
                     </p>
                   </div>
                 </div>
-              )}
-
-              {/* Original File Content */}
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  File URL:
-                </label>
-                <div className="mt-2 border rounded-lg p-4">
-                  <p className="font-bold">{selectedOrder.fileUrl}</p>
-                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="w-10 h-10 bg-white rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
               </div>
+            </div>
+
+            {/* Content */}
+            <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="p-8 space-y-8">
+                {/* Status and Basic Info */}
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                        <Calendar className="w-4 h-4" />
+                        <span>Status</span>
+                      </div>
+                      <Badge
+                        className={`${getStatusColor(
+                          selectedOrder.status
+                        )} text-sm font-medium px-3 py-1`}
+                      >
+                        {selectedOrder.status
+                          .replace("_", " ")
+                          .charAt(0)
+                          .toUpperCase() +
+                          selectedOrder.status.slice(1).replace("_", " ")}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                        <DollarSign className="w-4 h-4" />
+                        <span>Total Price</span>
+                      </div>
+                      <p className="text-xl font-semibold text-green-600">
+                        ${selectedOrder.totalPrice}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                        <FileText className="w-4 h-4" />
+                        <span>Pages</span>
+                      </div>
+                      <p className="text-lg font-medium text-gray-900">
+                        {selectedOrder.pageCount}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Customer Information */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center mr-2">
+                      <Mail className="w-3 h-3 text-blue-600" />
+                    </div>
+                    Customer Information
+                  </h4>
+                  <div className="bg-white border border-gray-200 rounded-xl p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                          <Mail className="w-4 h-4" />
+                          <span>Email</span>
+                        </div>
+                        <p className="text-gray-900 font-medium break-all">
+                          {selectedOrder.customerEmail}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                          <Phone className="w-4 h-4" />
+                          <span>Phone</span>
+                        </div>
+                        <p className="text-gray-900 font-medium">
+                          {selectedOrder.customerPhone || (
+                            <span className="text-gray-400 italic">
+                              Not provided
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order Details */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center mr-2">
+                      <Truck className="w-3 h-3 text-green-600" />
+                    </div>
+                    Order Details
+                  </h4>
+                  <div className="bg-white border border-gray-200 rounded-xl p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                          <Truck className="w-4 h-4" />
+                          <span>Delivery Type</span>
+                        </div>
+                        <p className="text-gray-900 font-medium">
+                          {selectedOrder.deliveryType}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          <span>Order Date</span>
+                        </div>
+                        <p className="text-gray-900 font-medium">
+                          {new Date(selectedOrder.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2 md:col-span-2">
+                        <div className="flex items-center space-x-2 text-sm font-medium text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          <span>Last Updated</span>
+                        </div>
+                        <p className="text-gray-900 font-medium">
+                          {new Date(selectedOrder.updatedAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* File URL Section */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center mr-2">
+                      <LinkIcon className="w-3 h-3 text-purple-600" />
+                    </div>
+                    File URL
+                  </h4>
+                  <div className="bg-white border border-gray-200 rounded-xl p-6">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-200">
+                          <p className="text-sm font-mono text-gray-700 break-all leading-relaxed">
+                            {selectedOrder.fileUrl}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(selectedOrder.fileUrl)}
+                        className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
+                          copied
+                            ? "bg-green-50 border-green-200 text-green-700"
+                            : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                        }`}
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-4 h-4" />
+                            <span className="text-sm font-medium">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4" />
+                            <span className="text-sm font-medium">Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Admin Notes */}
+                {selectedOrder.adminNotes && (
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <div className="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center mr-2">
+                        <StickyNote className="w-3 h-3 text-amber-600" />
+                      </div>
+                      Admin Notes
+                    </h4>
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                      <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
+                        {selectedOrder.adminNotes}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 flex justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(false)}
+                className="px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                Close
+              </Button>
             </div>
           </div>
         </div>
