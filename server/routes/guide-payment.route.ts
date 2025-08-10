@@ -26,6 +26,7 @@ export const createCreateGuideFormPaymentRoute = async (
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
+      payment_method_types: ["card", "amazon_pay"],
       metadata: {
         service: "form_guide",
         formId: formId,
