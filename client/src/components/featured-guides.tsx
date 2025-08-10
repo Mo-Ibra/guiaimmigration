@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useLanguage } from "./language-provider";
-import { FileText, Globe, Clock, Eye, ShoppingCart, Star, CheckCircle } from "lucide-react";
+import { FileText, Globe, ShoppingCart, Star, CheckCircle } from "lucide-react";
 import type { Guide } from "@shared/schema";
 import { apiRequest } from "../lib/queryClient";
 
@@ -107,7 +107,7 @@ export function FeaturedGuides() {
         {/* Guide Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {guides.map((guide) => (
-            <Card key={guide.id} className="group relative bg-white/90 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl overflow-hidden hover:scale-105">
+            <Card key={guide.id} className="group relative bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl overflow-hidden">
               {/* Gradient border effect */}
               <div className="absolute inset-0  rounded-2xl"></div>
               
@@ -173,7 +173,7 @@ export function FeaturedGuides() {
                     console.log("Buy Now clicked for guide:", guide.id);
                     window.location.href = `/checkout?guideId=${guide.id}&price=${guide.price}`;
                   }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span>{t("buyNow")}</span>
