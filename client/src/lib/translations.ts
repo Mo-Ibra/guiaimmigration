@@ -29,6 +29,10 @@ export const translations = {
     liveUpdatesDesc: "Real-time fees, processing times, and addresses",
     aiHelp: "AI Immigration Assistant",
     aiHelpDesc: "24/7 AI support for your immigration questions",
+    whyChooseUs: "Why Choose Us?",
+    featuresTitle: "Powerful Features",
+    featuresSubtitle: "Everything you need to navigate your immigration journey with confidence and ease",
+
     
     // Legal disclaimer
     legalDisclaimer: "Important Legal Disclaimer",
@@ -305,6 +309,9 @@ export const translations = {
     liveUpdatesDesc: "Tarifas, tiempos de procesamiento y direcciones en tiempo real",
     aiHelp: "Asistente IA de Inmigración",
     aiHelpDesc: "Soporte IA 24/7 para tus preguntas de inmigración",
+    whyChooseUs: "Porque Elegirnos",
+    featuresTitle: "Características",
+    featuresSubtitle: "Nuestros servicios para ayudarte a navegar tu proceso de inmigración",
     
     // Legal disclaimer
     legalDisclaimer: "Aviso Legal Importante",
