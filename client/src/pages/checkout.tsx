@@ -54,7 +54,6 @@ const formData: Record<string, FormDetails> = {
     features: [
       'Step-by-step completion guide',
       'Document checklist',
-      'Common mistakes to avoid',
       'Filing instructions'
     ]
   },
@@ -219,7 +218,6 @@ export default function Checkout() {
                 features: [
                   'Step-by-step completion guide',
                   'Document checklist',
-                  'Common mistakes to avoid',
                   'Filing instructions'
                 ]
               };
@@ -251,7 +249,6 @@ export default function Checkout() {
                 features: [
                   'Step-by-step completion guide',
                   'Document checklist',
-                  'Common mistakes to avoid',
                   'Filing instructions'
                 ]
               };

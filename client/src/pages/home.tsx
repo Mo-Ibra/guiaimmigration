@@ -9,6 +9,7 @@ import { Testimonials } from "../components/testimonials";
 import { Contact } from "../components/contact";
 import { Footer } from "../components/footer";
 import { useLanguage } from "../components/language-provider";
+import DisclaimerCard from "@/components/DisclaimerCard";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -19,11 +20,15 @@ export default function Home() {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <Hero />
       <Features />
+
+      {/* Disclaimer Section */}
+      <DisclaimerCard />
       
       {/* Guides Section */}
       <FeaturedGuides />

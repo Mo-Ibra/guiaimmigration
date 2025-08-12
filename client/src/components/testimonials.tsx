@@ -20,8 +20,8 @@ export function Testimonials() {
       name: language === "es" ? "Carlos Rodríguez" : "Carlos Rodriguez", 
       case: language === "es" ? "Naturalización N-400" : "Naturalization N-400",
       quote: language === "es"
-        ? "Gracias a las listas de verificación detalladas, pude prepararme perfectamente para mi entrevista de ciudadanía. ¡Ahora soy ciudadano americano!"
-        : "Thanks to the detailed checklists, I was able to prepare perfectly for my citizenship interview. I'm now an American citizen!",
+        ? "Este sitio es uno de los mejores que me ayudó con la traducción y la explicación. Muchas gracias a todo el maravilloso equipo."
+        : "This site is one of the best sites that helped me in translation and explanations. Thanks to the entire amazing team.",
       rating: 5,
       timeline: language === "es" ? "Ciudadanía obtenida" : "Citizenship obtained"
     },

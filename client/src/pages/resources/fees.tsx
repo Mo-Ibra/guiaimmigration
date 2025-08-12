@@ -120,8 +120,8 @@ export default function Fees() {
             </p>
             <p className="text-sm text-gray-500">
               {language === 'es' 
-                ? "Última actualización: Diciembre 2024 • Siempre verifique las tarifas actuales en USCIS.gov antes de presentar"
-                : "Last updated: December 2024 • Always verify current fees on USCIS.gov before filing"
+                ? "Última actualización: Diciembre 2025 • Siempre verifique las tarifas actuales en USCIS.gov antes de presentar"
+                : "Last updated: December 2025 • Always verify current fees on USCIS.gov before filing"
               }
             </p>
           </div>

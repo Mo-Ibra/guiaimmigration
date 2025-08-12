@@ -162,7 +162,7 @@ export function FeaturedGuides() {
                     <div className="flex-shrink-0 w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                       <CheckCircle className="w-4 h-4 text-emerald-600" />
                     </div>
-                    <span className="font-medium">Updated for 2024 requirements</span>
+                    <span className="font-medium">Updated for 2025 requirements</span>
                   </div>
                 </div>
                 

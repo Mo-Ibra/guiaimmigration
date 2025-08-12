@@ -83,7 +83,7 @@ export const translations = {
     // Essential Immigration Resources
     essentialResources: "Essential Immigration Resources",
     i864Guidelines: "I-864P Poverty Guidelines",
-    i864Desc: "2024 Federal Poverty Guidelines for Affidavit of Support",
+    i864Desc: "2025 Federal Poverty Guidelines for Affidavit of Support",
     officialUscis: "Official USCIS Website",
     officialUscisDesc: "Access all USCIS forms, information, and services",
     onlineFiling: "USCIS Online Filing",
@@ -204,7 +204,7 @@ export const translations = {
     
     // Filing Fees page
     filingFeesTitle: "USCIS Filing Fees",
-    filingFeesSubtitle: "Current government fees for immigration forms (updated 2024)",
+    filingFeesSubtitle: "Current government fees for immigration forms (updated 2025)",
     
     // FAQ page
     faqTitle: "Frequently Asked Questions",
@@ -264,7 +264,8 @@ export const translations = {
     
     // Free Forms page
     freeChecklistsTitle: "Free Immigration Checklists",
-    freeChecklistsSubtitle: "Download comprehensive checklists to ensure you have all required documents for your immigration application",
+    freeChecklistsSubtitle: "Check this page regularly for free immigration checklists",
+    freeCheckListsTitleUnderIcon: "Free forms",
     freeChecklistsComingSoon: "We're preparing comprehensive immigration checklists to help you organize your documentation. These checklists will ensure you have all required documents before submitting your application.",
     availableChecklists: "Available Checklists:",
     i130ChecklistTitle: "I-130 Family Petition Checklist",
@@ -362,7 +363,7 @@ export const translations = {
     // Essential Immigration Resources
     essentialResources: "Recursos Esenciales de Inmigración",
     i864Guidelines: "Pautas de Pobreza I-864P",
-    i864Desc: "Pautas Federales de Pobreza 2024 para Declaración Jurada de Apoyo",
+    i864Desc: "Pautas Federales de Pobreza 2025 para Declaración Jurada de Apoyo",
     officialUscis: "Sitio Web Oficial de USCIS",
     officialUscisDesc: "Accede a todos los formularios, información y servicios de USCIS",
     onlineFiling: "Presentación en Línea de USCIS",
@@ -483,7 +484,7 @@ export const translations = {
     
     // Filing Fees page
     filingFeesTitle: "Tarifas de Presentación de USCIS",
-    filingFeesSubtitle: "Tarifas gubernamentales actuales para formularios de inmigración (actualizado 2024)",
+    filingFeesSubtitle: "Tarifas gubernamentales actuales para formularios de inmigración (actualizado 2025)",
     
     // FAQ page
     faqTitle: "Preguntas Frecuentes",
@@ -543,7 +544,8 @@ export const translations = {
     
     // Free Forms page
     freeChecklistsTitle: "Listas de Verificación Gratuitas de Inmigración",
-    freeChecklistsSubtitle: "Descarga listas de verificación completas para asegurar que tengas todos los documentos requeridos para tu solicitud de inmigración",
+    freeChecklistsSubtitle: "Consulte esta página periódicamente para obtener listas de verificación de inmigración gratuitas.",
+    freeCheckListsTitleUnderIcon: "Formas libres",
     freeChecklistsComingSoon: "Estamos preparando listas de verificación completas de inmigración para ayudarte a organizar tu documentación. Estas listas asegurarán que tengas todos los documentos requeridos antes de enviar tu solicitud.",
     availableChecklists: "Listas de Verificación Disponibles:",
     i130ChecklistTitle: "Lista de Verificación Petición Familiar I-130",

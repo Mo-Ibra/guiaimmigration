@@ -270,7 +270,7 @@ export default function FAQ() {
           <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
             <h3 className="text-xl font-semibold text-blue-800 mb-4">Still Have Questions?</h3>
             <p className="text-blue-700 mb-6">
-              Can't find the answer you're looking for? Our team is here to help with your immigration questions.
+              Can't find the answer you're looking for? Our team is here to help with you non-legal immigration questions.
             </p>
             <Link href="/#contact">
               <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
