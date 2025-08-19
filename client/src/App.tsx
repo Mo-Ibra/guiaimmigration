@@ -33,12 +33,14 @@ import Fees from "./pages/resources/fees";
 import FAQ from "./pages/resources/faq";
 import NotFound from "./pages/not-found";
 import { queryClient } from "./lib/queryClient";
+import ScrollToTop from "./components/scroll-to-top";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LanguageProvider>
+          <ScrollToTop />
           <Switch>
             <Route path="/" component={Home} />
             <Route path="/videos" component={Videos} />
